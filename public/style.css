@@ -130,3 +130,45 @@ body {
   align-items: center;
   z-index: 1000;
 }
+
+@media (max-width: 600px) {
+  .slider-content {
+    width: 95%;            /* чуть шире на мобильных */
+    padding: 15px;
+    max-height: 95vh;      /* используем почти весь экран */
+  }
+
+  .roulette-container {
+    height: 180px;         /* увеличиваем рулетку */
+  }
+
+  .roulette-item {
+    min-width: 120px;      /* увеличиваем элементы рулетки */
+    height: 120px;
+    margin: 10px 5px;
+  }
+
+  .gallery {
+    grid-template-columns: repeat(2, 1fr); /* 2 квадрата в ряд, чтобы не сжимались */
+    gap: 8px;
+  }
+
+  .gallery div {
+    height: 120px;          /* фиксируем квадрат */
+  }
+
+  .gallery div img {
+    width: 80px;            /* размеры гифок можно оставить */
+    height: 80px;
+    object-fit: contain;
+  }
+
+  #footer-bar {
+    padding: 12px;
+  }
+
+  .open-btn {
+    padding: 12px 20px;
+    font-size: 18px;
+  }
+}
