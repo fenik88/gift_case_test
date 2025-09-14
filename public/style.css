@@ -133,20 +133,27 @@ body {
 
 @media (max-width: 600px) {
   body {
-    height: auto;               /* убираем ограничение по высоте */
-    align-items: flex-start;    /* чтобы не центрировался */
-    padding: 10px 0;            /* немного отступа сверху/снизу */
+    display: block;      /* убираем flex-центрирование */
+    height: auto;        /* не фиксируем высоту */
+    padding: 0;
+  }
+
+  .slider {
+    justify-content: flex-start;  /* чтобы контент шёл сверху */
+    align-items: flex-start;
+    overflow-y: auto;             /* вертикальный скролл */
   }
 
   .slider-content {
     width: 95%;
     max-width: 95%;
-    max-height: 95vh;           /* почти весь экран */
-    margin: 10px auto;          /* центрируем горизонтально */
+    max-height: 95vh;             /* почти весь экран */
+    margin: 20px auto;
+    padding-bottom: 60px;         /* оставляем место для кнопки внизу */
   }
 
   .roulette-container {
-    height: 180px;              /* увеличиваем рулетку */
+    height: 180px;                /* увеличиваем рулетку */
   }
 
   .roulette-item {
@@ -163,9 +170,12 @@ body {
     height: 120px;
   }
 
+  #footer-bar {
+    padding: 12px 0;
+  }
+
   .open-btn {
     padding: 12px 20px;
     font-size: 18px;
   }
-}
 }
