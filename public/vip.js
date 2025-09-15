@@ -6,16 +6,16 @@ const spinBtn = document.getElementById("spinBtn");
 
 // Список подарков с путями к твоим гифкам
 const gifts = [
-  { name: "Signet Ring", file: "signet_ring.gif" },
-  { name: "Perfume", file: "perfume.gif" },
-  { name: "Plush Pepe", file: "plush_pepe.gif" },
-  { name: "Peach", file: "peach.gif" },
-  { name: "Durov's Cap", file: "cap.gif" },
-  { name: "Venom", file: "venom.gif" },
-  { name: "Scared Cat", file: "cat.gif" },
-  { name: "Heroic Helmet", file: "helmet.gif" },
-  { name: "Bonded Ring", file: "bonded_ring.gif" },
-  {name: "Heart Locket", file: "heart_locket.gif"}
+  { name: "Signet Ring", file: "signet_ring.webp" },
+  { name: "Perfume", file: "perfume.webp" },
+  { name: "Plush Pepe", file: "plush_pepe.webp" },
+  { name: "Peach", file: "peach.webp" },
+  { name: "Durov's Cap", file: "cap.webp" },
+  { name: "Venom", file: "venom.webp" },
+  { name: "Scared Cat", file: "cat.webp" },
+  { name: "Heroic Helmet", file: "helmet.webp" },
+  { name: "Bonded Ring", file: "bonded_ring.webp" },
+  {name: "Heart Locket", file: "heart_locket.webp"}
 ];
 
 const LOOP_COUNT = 20;
