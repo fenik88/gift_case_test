@@ -29,7 +29,7 @@ function preloadWebp(file) {
   });
 }
 
-/* ---------- РУЛЕТКА (сразу анимированные webp) ---------- */
+/* ---------- РУЛЕТКА (изначально static_webp) ---------- */
 function fillRoulette() {
   roulette.innerHTML = "";
   for (let i = 0; i < gifts.length * LOOP_COUNT; i++) {
@@ -38,7 +38,7 @@ function fillRoulette() {
     item.classList.add("roulette-item");
 
     const img = document.createElement("img");
-    img.src = `/gifs/${gift.file}`;
+    img.src = `/static_webp/${gift.file}`; // сначала статичные
     img.alt = gift.name;
     img.width = 80;
     img.height = 80;
@@ -48,9 +48,15 @@ function fillRoulette() {
   }
 }
 
-/* ---------- ГАЛЕРЕЯ (изначально static_webp → потом gifs) ---------- */
-function swapGalleryToAnimated() {
+/* ---------- ЗАМЕНА PNG → webp (анимированных) ---------- */
+function swapToAnimated() {
+  // галерея
   document.querySelectorAll(".gallery img").forEach(img => {
+    img.src = img.src.replace("/static_webp/", "/gifs/");
+  });
+
+  // рулетка
+  document.querySelectorAll(".roulette-item img").forEach(img => {
     img.src = img.src.replace("/static_webp/", "/gifs/");
   });
 }
@@ -58,9 +64,9 @@ function swapGalleryToAnimated() {
 /* ---------- ИНИЦИАЛИЗАЦИЯ ---------- */
 fillRoulette();
 
-// подгружаем анимированные webp и после этого заменяем в галерее
+// когда все webp загружены → заменяем в рулетке и галерее
 Promise.all(gifts.map(g => preloadWebp(g.file))).then(() => {
-  swapGalleryToAnimated();
+  swapToAnimated();
 });
 
 /* ---------- СЛАЙДЕР ---------- */
