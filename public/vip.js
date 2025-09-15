@@ -4,18 +4,18 @@ const closeBtn = document.getElementById("closeBtn");
 const roulette = document.getElementById("roulette");
 const spinBtn = document.getElementById("spinBtn");
 
-// Список подарков с путями к webm
+// Список подарков с путями к твоим гифкам
 const gifts = [
-  { name: "Signet Ring", file: "signet_ring.webm" },
-  { name: "Perfume", file: "perfume.webm" },
-  { name: "Plush Pepe", file: "plush_pepe.webm" },
-  { name: "Peach", file: "peach.webm" },
-  { name: "Durov's Cap", file: "cap.webm" },
-  { name: "Venom", file: "venom.webm" },
-  { name: "Scared Cat", file: "cat.webm" },
-  { name: "Heroic Helmet", file: "helmet.webm" },
-  { name: "Bonded Ring", file: "bonded_ring.webm" },
-  { name: "Heart Locket", file: "heart_locket.webm" }
+  { name: "Signet Ring", file: "signet_ring.webp" },
+  { name: "Perfume", file: "perfume.webp" },
+  { name: "Plush Pepe", file: "plush_pepe.webp" },
+  { name: "Peach", file: "peach.webp" },
+  { name: "Durov's Cap", file: "cap.webp" },
+  { name: "Venom", file: "venom.webp" },
+  { name: "Scared Cat", file: "cat.webp" },
+  { name: "Heroic Helmet", file: "helmet.webp" },
+  { name: "Bonded Ring", file: "bonded_ring.webp" },
+  {name: "Heart Locket", file: "heart_locket.webp"}
 ];
 
 const LOOP_COUNT = 20;
@@ -27,23 +27,13 @@ function fillRoulette() {
     const item = document.createElement("div");
     item.classList.add("roulette-item");
 
-    // создаём видео вместо img
-    const video = document.createElement("video");
-    video.autoplay = true;
-    video.loop = true;
-    video.muted = true;
-    video.playsInline = true;
-    video.preload = "none";
-    video.width = 80;
-    video.height = 80;
-    video.setAttribute("data-name", gift.name); // чтобы искать приз по имени
+    const img = document.createElement("img");
+    img.src = `/gifs/${gift.file}`;
+    img.alt = gift.name;
+    img.style.width = "80px";
+    img.style.height = "80px";
+    item.appendChild(img);
 
-    const source = document.createElement("source");
-    source.src = `/gifs/${gift.file}`; // путь такой же, как у гифок
-    source.type = "video/webm";
-
-    video.appendChild(source);
-    item.appendChild(video);
     roulette.appendChild(item);
   }
 }
@@ -74,11 +64,11 @@ spinBtn.addEventListener("click", async () => {
       return;
     }
 
-    const { prize } = data; // сервер возвращает, например "Perfume"
+    const { prize } = data; // сервер теперь возвращает строку, например "Perfume"
 
     const items = Array.from(roulette.children);
     const prizeElement = items.find(el =>
-      el.querySelector("video").getAttribute("data-name") === prize
+      el.querySelector("img").alt === prize
     );
 
     if (!prizeElement) {
@@ -89,13 +79,14 @@ spinBtn.addEventListener("click", async () => {
 
     const itemWidth = items[0].offsetWidth + 20;
     const markerCenter = roulette.parentElement.offsetWidth / 2;
+
     const prizeCenter = prizeElement.offsetLeft + prizeElement.offsetWidth / 2;
 
     roulette.style.transition = "none";
     roulette.style.transform = `translateX(0px)`;
 
     requestAnimationFrame(() => {
-      const extraSpins = gifts.length * itemWidth * 8; // запасные обороты
+      const extraSpins = gifts.length * itemWidth * 8;
       const target = prizeCenter - markerCenter + extraSpins;
 
       roulette.style.transition = "transform 4s cubic-bezier(0.25, 1, 0.5, 1)";
