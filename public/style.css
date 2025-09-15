@@ -3,18 +3,19 @@ body {
   font-family: Arial, sans-serif;
   background: #111;
   color: #fff;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  margin: 0;
 }
 
 .container {
   text-align: center;
 }
 
-/* ===== Карточка VIP кейса ===== */
+/* ===== VIP кейс на главной ===== */
 .case {
   border: 2px solid #fff;
   padding: 20px;
@@ -32,23 +33,22 @@ body {
   display: none;
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.95);
+  background: rgba(0,0,0,0.95);
   z-index: 1000;
-  justify-content: center;
-  align-items: center;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .slider-content {
-  background: #222;
+  flex: 1;
   padding: 20px;
-  border-radius: 12px;
-  width: 90%;
+  width: 100%;
   max-width: 600px;
+  margin: auto;
   text-align: center;
   position: relative;
-  max-height: 90vh;          /* Ограничиваем высоту */
-  overflow-y: auto;          /* Скролл при необходимости */
-  -webkit-overflow-scrolling: touch;
+  padding-bottom: 80px; /* отступ под футер */
 }
 
 /* Кнопка закрытия */
@@ -60,12 +60,26 @@ body {
   color: #fff;
 }
 
+/* ===== Панель сверху ===== */
+.top-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+.top-bar .demo {
+  color: #0ff;
+  font-weight: bold;
+}
+
 /* ===== Рулетка ===== */
 .roulette-container {
   position: relative;
   overflow: hidden;
   width: 100%;
-  height: 120px;
+  height: 140px;
   margin: 20px 0;
   border: 2px solid #fff;
   border-radius: 10px;
@@ -74,27 +88,29 @@ body {
 
 .roulette {
   display: flex;
+  align-items: center;
+  height: 100%;
   transition: transform 4s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .roulette-item {
-  min-width: 100px;
+  flex: 0 0 100px;
   height: 100px;
-  background: #333;
-  margin: 10px;
+  background: #222;
   border-radius: 8px;
+  margin: 0 5px;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
 .roulette-item img {
-  width: 80px;
-  height: 80px;
+  width: 70px;
+  height: 70px;
   object-fit: contain;
 }
 
-/* Красный маркер по центру */
 .roulette-marker {
   position: absolute;
   top: 0;
@@ -106,25 +122,45 @@ body {
   z-index: 10;
 }
 
-/* ===== Кнопка "Открыть" ===== */
-.open-btn {
+/* ===== Галерея ===== */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
   margin-top: 10px;
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-  border: none;
-  border-radius: 8px;
-  background: #28a745;
-  color: #fff;
-  transition: background 0.2s;
-}
-.open-btn:hover {
-  background: #218838;
 }
 
-/* Панель снизу */
+.gallery-item {
+  position: relative;
+  background: #333;
+  padding: 10px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.gallery-item img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+
+.price-tag {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  background: rgba(0,0,0,0.7);
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #0ff;
+  font-weight: bold;
+}
+
+/* ===== Кнопка открыть (только внутри слайдера) ===== */
 #footer-bar {
-  position: fixed;
+  position: sticky;
   bottom: 0;
   left: 0;
   width: 100%;
@@ -134,90 +170,37 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
 }
 
-/* ===== Галерея ===== */
-.gallery {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.gallery div {
-  background: #333;
-  padding: 10px;
+.open-btn {
+  width: 90%;
+  padding: 14px 24px;
+  font-size: 18px;
+  cursor: pointer;
+  border: none;
   border-radius: 8px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background: #007bff;
+  color: #fff;
 }
-
-.gallery img {
-  width: 80px;
-  height: 80px;
-  object-fit: contain;
+.open-btn:hover {
+  background: #0069d9;
 }
 
 /* ===== Адаптив ===== */
 @media (max-width: 600px) {
-  body {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    margin: 0;
-  }
-
-  .container {
-    margin-top: 20px;
-    text-align: center;
-  }
-
-  .slider {
-    justify-content: flex-start;
-    align-items: flex-start;
-  }
-
-  .slider-content {
-    width: 95%;
-    max-width: 95%;
-    margin: 10px auto;
-    max-height: 95vh;
-    padding-bottom: 70px;
-  }
-
   .roulette-container {
-    height: 160px;
+    height: 120px;
   }
-
   .roulette-item {
-    min-width: 120px;
-    height: 120px;
+    flex: 0 0 90px;
+    height: 90px;
   }
-
   .roulette-item img {
-    width: 100px;
-    height: 100px;
+    width: 60px;
+    height: 60px;
   }
-
-  .gallery {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .gallery div {
-    height: 120px;
-  }
-
-  .gallery img {
-    width: 100px;
-    height: 100px;
-  }
-
-  .open-btn {
-    padding: 14px 24px;
-    font-size: 18px;
+  .gallery-item img {
+    width: 70px;
+    height: 70px;
   }
 }
