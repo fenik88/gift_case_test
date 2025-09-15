@@ -4,7 +4,6 @@ const closeBtn = document.getElementById("closeBtn");
 const roulette = document.getElementById("roulette");
 const spinBtn = document.getElementById("spinBtn");
 
-// Список подарков с путями к твоим гифкам
 const gifts = [
   { name: "Signet Ring", file: "signet_ring.webp" },
   { name: "Perfume", file: "perfume.webp" },
@@ -15,11 +14,22 @@ const gifts = [
   { name: "Scared Cat", file: "cat.webp" },
   { name: "Heroic Helmet", file: "helmet.webp" },
   { name: "Bonded Ring", file: "bonded_ring.webp" },
-  {name: "Heart Locket", file: "heart_locket.webp"}
+  { name: "Heart Locket", file: "heart_locket.webp" }
 ];
 
 const LOOP_COUNT = 20;
 
+/* ---------- УТИЛИТА ДЛЯ ПРЕЛОАДА АНИМАЦИЙ ---------- */
+function preloadWebp(file) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.src = `/gifs/${file}`;
+    img.onload = () => resolve(file);
+    img.onerror = reject;
+  });
+}
+
+/* ---------- РУЛЕТКА (сразу анимированные webp) ---------- */
 function fillRoulette() {
   roulette.innerHTML = "";
   for (let i = 0; i < gifts.length * LOOP_COUNT; i++) {
@@ -30,16 +40,30 @@ function fillRoulette() {
     const img = document.createElement("img");
     img.src = `/gifs/${gift.file}`;
     img.alt = gift.name;
-    img.style.width = "80px";
-    img.style.height = "80px";
-    item.appendChild(img);
+    img.width = 80;
+    img.height = 80;
 
+    item.appendChild(img);
     roulette.appendChild(item);
   }
 }
 
+/* ---------- ГАЛЕРЕЯ (изначально static_webp → потом gifs) ---------- */
+function swapGalleryToAnimated() {
+  document.querySelectorAll(".gallery img").forEach(img => {
+    img.src = img.src.replace("/static_webp/", "/gifs/");
+  });
+}
+
+/* ---------- ИНИЦИАЛИЗАЦИЯ ---------- */
 fillRoulette();
 
+// подгружаем анимированные webp и после этого заменяем в галерее
+Promise.all(gifts.map(g => preloadWebp(g.file))).then(() => {
+  swapGalleryToAnimated();
+});
+
+/* ---------- СЛАЙДЕР ---------- */
 vipCase.addEventListener("click", () => {
   slider.style.display = "flex";
 });
@@ -48,6 +72,7 @@ closeBtn.addEventListener("click", () => {
   slider.style.display = "none";
 });
 
+/* ---------- ЛОГИКА РУЛЕТКИ ---------- */
 spinBtn.addEventListener("click", async () => {
   spinBtn.disabled = true;
 
@@ -64,7 +89,7 @@ spinBtn.addEventListener("click", async () => {
       return;
     }
 
-    const { prize } = data; // сервер теперь возвращает строку, например "Perfume"
+    const { prize } = data;
 
     const items = Array.from(roulette.children);
     const prizeElement = items.find(el =>
@@ -79,7 +104,6 @@ spinBtn.addEventListener("click", async () => {
 
     const itemWidth = items[0].offsetWidth + 20;
     const markerCenter = roulette.parentElement.offsetWidth / 2;
-
     const prizeCenter = prizeElement.offsetLeft + prizeElement.offsetWidth / 2;
 
     roulette.style.transition = "none";
