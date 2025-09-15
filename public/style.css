@@ -43,9 +43,9 @@ body {
   max-width: 600px;
   text-align: center;
   position: relative;
-  max-height: 90vh;          /* Ограничиваем высоту, чтобы скролл был виден */
-  overflow-y: auto;          /* Включаем вертикальный скролл */
-  -webkit-overflow-scrolling: touch; /* плавный скролл на мобильных */
+  max-height: 90vh;          /* Ограничиваем высоту */
+  overflow-y: auto;          /* Вертикальный скролл */
+  -webkit-overflow-scrolling: touch;
 }
 
 .close {
@@ -122,7 +122,7 @@ body {
   bottom: 0;
   left: 0;
   width: 100%;
-  background: #111;       /* тёмный фон */
+  background: #111;
   border-top: 2px solid #444;
   padding: 10px;
   display: flex;
@@ -134,26 +134,26 @@ body {
 @media (max-width: 600px) {
   body {
     display: block;      /* убираем flex-центрирование */
-    height: auto;        /* не фиксируем высоту */
+    height: auto;        /* страница тянется по контенту */
     padding: 0;
   }
 
   .slider {
-    justify-content: flex-start;  /* чтобы контент шёл сверху */
+    justify-content: flex-start;  /* контент сверху */
     align-items: flex-start;
-    overflow-y: auto;             /* вертикальный скролл */
+    overflow-y: auto;
   }
 
   .slider-content {
     width: 95%;
     max-width: 95%;
-    max-height: 95vh;             /* почти весь экран */
+    max-height: 95vh;
     margin: 20px auto;
-    padding-bottom: 60px;         /* оставляем место для кнопки внизу */
+    padding-bottom: 60px; /* место под кнопку */
   }
 
   .roulette-container {
-    height: 180px;                /* увеличиваем рулетку */
+    height: 180px;   /* рулетка крупнее */
   }
 
   .roulette-item {
@@ -162,7 +162,7 @@ body {
   }
 
   .gallery {
-    grid-template-columns: repeat(2, 1fr); /* 2 квадрата в ряд */
+    grid-template-columns: repeat(2, 1fr); /* 2 в ряд */
     gap: 10px;
   }
 
