@@ -133,13 +133,21 @@ body {
 
 @media (max-width: 600px) {
   body {
-    display: block;      /* убираем flex-центрирование */
-    height: auto;        /* страница тянется по контенту */
-    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+  }
+
+  .container {
+    margin-top: 20px;
+    text-align: center;
   }
 
   .slider {
-    justify-content: flex-start;  /* контент сверху */
+    justify-content: flex-start;
     align-items: flex-start;
     overflow-y: auto;
   }
@@ -147,13 +155,13 @@ body {
   .slider-content {
     width: 95%;
     max-width: 95%;
+    margin: 10px auto;
     max-height: 95vh;
-    margin: 20px auto;
-    padding-bottom: 60px; /* место под кнопку */
+    padding-bottom: 70px;
   }
 
   .roulette-container {
-    height: 180px;   /* рулетка крупнее */
+    height: 180px;
   }
 
   .roulette-item {
@@ -161,8 +169,12 @@ body {
     height: 120px;
   }
 
+  .roulette-marker {
+    z-index: 9999; /* всегда сверху */
+  }
+
   .gallery {
-    grid-template-columns: repeat(2, 1fr); /* 2 в ряд */
+    grid-template-columns: repeat(3, 1fr); /* 3 колонки на мобиле */
     gap: 10px;
   }
 
@@ -171,11 +183,15 @@ body {
   }
 
   #footer-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
     padding: 12px 0;
   }
 
   .open-btn {
-    padding: 12px 20px;
+    padding: 14px 24px;
     font-size: 18px;
   }
 }
