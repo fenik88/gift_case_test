@@ -1,20 +1,26 @@
 /* ===== Общие стили ===== */
-body {
+html, body {
   font-family: Arial, sans-serif;
   background: #111;
   color: #fff;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;   /* убираем горизонтальный скролл */
+}
+
+body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  margin: 0;
 }
 
+/* ===== Карточка VIP кейса ===== */
 .container {
   text-align: center;
 }
 
-/* ===== Карточка VIP кейса ===== */
 .case {
   border: 2px solid #fff;
   padding: 20px;
@@ -31,7 +37,7 @@ body {
 .slider {
   display: none;
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
+  inset: 0;
   background: rgba(0, 0, 0, 0.95);
   z-index: 1000;
   justify-content: center;
@@ -42,46 +48,63 @@ body {
   background: #222;
   padding: 20px;
   border-radius: 12px;
-  width: 90%;
+  width: 95%;
   max-width: 600px;
   text-align: center;
   position: relative;
-  max-height: 90vh;          /* Ограничиваем высоту */
-  overflow-y: auto;          /* Скролл при необходимости */
+  max-height: 95vh;
+  overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  margin: auto;
 }
 
 /* Кнопка закрытия */
 .close {
   position: absolute;
-  top: 10px; right: 20px;
-  font-size: 28px;
+  top: 30px;
+  right: 50px;
+  font-size: 30px;         /* увеличенный размер */
+  font-weight: bold;       /* жирный крестик */
   cursor: pointer;
   color: #fff;
+  border-radius: 50%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background 0.2s;
+  z-index: 2001;
 }
+
+
+
 
 /* ===== Рулетка ===== */
 .roulette-container {
   position: relative;
   overflow: hidden;
   width: 100%;
-  height: 120px;
-  margin: 20px 0;
+  height: 140px;
+  margin: 20px auto;
   border: 2px solid #fff;
   border-radius: 10px;
   background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .roulette {
   display: flex;
+  align-items: center;
   transition: transform 4s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .roulette-item {
-  min-width: 100px;
-  height: 100px;
+  flex: 0 0 110px; /* фиксированная ширина */
+  height: 110px;
+  margin: 0 5px;
   background: #333;
-  margin: 10px;
   border-radius: 8px;
   display: flex;
   justify-content: center;
@@ -89,8 +112,8 @@ body {
 }
 
 .roulette-item img {
-  width: 80px;
-  height: 80px;
+  width: 90px;
+  height: 90px;
   object-fit: contain;
 }
 
@@ -99,7 +122,7 @@ body {
   position: absolute;
   top: 0;
   left: 50%;
-  width: 2px;
+  width: 3px;
   height: 100%;
   background: red;
   transform: translateX(-50%);
@@ -107,13 +130,29 @@ body {
 }
 
 /* ===== Кнопка "Открыть" ===== */
+#footer-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #111;
+  border-top: 2px solid #444;
+  padding: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
 .open-btn {
-  margin-top: 10px;
-  padding: 10px 20px;
-  font-size: 16px;
+  width: 90%;
+  max-width: 400px;
+  padding: 16px;
+  font-size: 20px;
+  font-weight: bold;
   cursor: pointer;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   background: #28a745;
   color: #fff;
   transition: background 0.2s;
@@ -122,27 +161,12 @@ body {
   background: #218838;
 }
 
-/* Панель снизу */
-#footer-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background: #111;
-  border-top: 2px solid #444;
-  padding: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
 /* ===== Галерея ===== */
 .gallery {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
-  margin-top: 10px;
+  margin: 20px 0 80px; /* отступ под кнопку */
 }
 
 .gallery div {
@@ -155,69 +179,26 @@ body {
 }
 
 .gallery img {
-  width: 80px;
-  height: 80px;
+  width: 90px;
+  height: 90px;
   object-fit: contain;
 }
 
 /* ===== Адаптив ===== */
 @media (max-width: 600px) {
-  body {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    margin: 0;
-  }
-
-  .container {
-    margin-top: 20px;
-    text-align: center;
-  }
-
-  .slider {
-    justify-content: flex-start;
-    align-items: flex-start;
-  }
-
-  .slider-content {
-    width: 95%;
-    max-width: 95%;
-    margin: 10px auto;
-    max-height: 95vh;
-    padding-bottom: 70px;
-  }
-
   .roulette-container {
     height: 160px;
   }
-
   .roulette-item {
-    min-width: 120px;
+    flex: 0 0 120px;
     height: 120px;
   }
-
   .roulette-item img {
     width: 100px;
     height: 100px;
   }
-
-  .gallery {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .gallery div {
-    height: 120px;
-  }
-
-  .gallery img {
-    width: 100px;
-    height: 100px;
-  }
-
   .open-btn {
-    padding: 14px 24px;
-    font-size: 18px;
+    padding: 18px;
+    font-size: 22px;
   }
 }
