@@ -2,15 +2,16 @@
 
 /* ===== Vars ===== */
 :root{
-  --footer-h: 64px;
-  --item-size: 112px;   /* размер ячейки рулетки */
-  --h-gap: 10px;        /* горизонтальный зазор между ячейками */
-  --v-pad: 14px;        /* вертикальные поля контейнера (симметрия) */
-  --border-w: 2px;      /* толщина белой рамки */
+  --footer-h: 64px;      /* будет переписано JS по реальной высоте футера */
+  --item-size: 112px;
+  --h-gap: 10px;
+  --v-pad: 14px;
+  --border-w: 2px;
 }
 
-/* ===== База ===== */
+/* ===== Base ===== */
 *{ box-sizing: border-box; }
+html{ -webkit-text-size-adjust: 100%; } /* why: не раздувать шрифты в TG iOS */
 html, body{
   height: 100%;
   margin: 0;
@@ -30,7 +31,7 @@ a,button{ touch-action: manipulation; }
   text-align: center;
 }
 
-/* ===== Карточка ===== */
+/* ===== Card ===== */
 .case{
   border: 2px solid #fff;
   padding: 20px 24px;
@@ -42,13 +43,12 @@ a,button{ touch-action: manipulation; }
 }
 .case:hover,.case:active{ transform: scale(1.03); }
 
-/* ===== Модалка ===== */
+/* ===== Modal ===== */
 .slider{
   display: none; position: fixed; inset: 0; z-index: 1000;
   align-items: center; justify-content: center;
 }
 .slider.is-open{ display: flex; }
-
 .slider-backdrop{
   position: absolute; inset: 0;
   background: rgba(0,0,0,.6); backdrop-filter: blur(2px);
@@ -58,10 +58,10 @@ a,button{ touch-action: manipulation; }
   padding: 20px;
   border-radius: 14px;
   width: min(600px, 92vw);
+  /* важное: max-height не учитывает футер — JS прокинет правильную --footer-h */
   max-height: calc(100vh - var(--footer-h) - env(safe-area-inset-bottom) - 24px);
   overflow-y: auto; -webkit-overflow-scrolling: touch;
   box-shadow: 0 10px 30px rgba(0,0,0,.5);
-  /* чтобы контент не прятался под фикс-футер */
   padding-bottom: calc(16px + var(--footer-h) + env(safe-area-inset-bottom));
 }
 
@@ -74,32 +74,24 @@ a,button{ touch-action: manipulation; }
   background: #2c2c2c; color: #fff; font-size: 24px;
 }
 
-/* ===== Рулетка ===== */
+/* ===== Roulette (симметрия по вертикали) ===== */
 .roulette-container{
   position: relative; overflow: hidden; width: 100%;
-  /* симметрия по вертикали через padding, а не margin у элементов */
   height: calc(var(--item-size) + 2*var(--v-pad) + 2*var(--border-w));
   padding-block: var(--v-pad);
   border: var(--border-w) solid #fff;
   border-radius: 12px;
   background: #000;
 }
-
 .roulette{
-  display: flex;
-  will-change: transform;
-  transform: translateZ(0);
+  display: flex; will-change: transform; transform: translateZ(0);
   transition: transform 4s cubic-bezier(0.25, 1, 0.5, 1);
 }
-
-/* ВАЖНО: без вертикальных margin; только горизонтальные */
 .roulette-item{
   flex: 0 0 auto;
-  width: var(--item-size);
-  height: var(--item-size);
+  width: var(--item-size); height: var(--item-size);
   margin: 0 var(--h-gap);
-  background: #1f1f1f;
-  border-radius: 10px;
+  background: #1f1f1f; border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
   user-select: none;
 }
@@ -109,33 +101,32 @@ a,button{ touch-action: manipulation; }
   object-fit: contain;
   image-rendering: -webkit-optimize-contrast;
 }
-
-/* Маркер по центру */
 .roulette-marker{
   position: absolute; top: 0; left: 50%;
-  width: 2px; height: 100%; background: red;
-  transform: translateX(-50%);
+  width: 2px; height: 100%; background: red; transform: translateX(-50%);
   z-index: 10; pointer-events: none; opacity: .85;
 }
 
-/* ===== Футер (fallback вне Telegram) ===== */
+/* ===== Footer (без фиксированной высоты!) ===== */
 #footer-bar{
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 1001;
-  height: var(--footer-h);
   display: flex; align-items: center; justify-content: center;
   background: #111111f2; border-top: 1px solid #333;
   padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
   backdrop-filter: blur(6px);
 }
 .open-btn{
-  min-width: 220px; height: 48px; border: 0; border-radius: 12px;
+  display: inline-flex; align-items: center; justify-content: center; /* why: стабильная вертикаль */
+  min-width: 220px; height: 48px;
+  border: 0; border-radius: 12px;
   background: #28a745; color: #fff; font-size: 18px; font-weight: 700; letter-spacing: .3px;
+  line-height: 1; /* why: не растягивать из-за line-height */
   cursor: pointer; transition: transform .08s ease, background .15s ease;
 }
 .open-btn:active{ transform: translateY(1px); }
 .open-btn[disabled]{ opacity: .6; cursor: not-allowed; }
 
-/* ===== Галерея ===== */
+/* ===== Gallery ===== */
 .gallery{
   display: grid; grid-template-columns: repeat(3, 1fr);
   gap: 10px; margin-top: 10px;
@@ -148,10 +139,7 @@ a,button{ touch-action: manipulation; }
 
 /* ===== Responsive ===== */
 @media (max-width: 600px){
-  :root{
-    --item-size: 128px;
-    --v-pad: 16px; /* оставляем симметрию */
-  }
+  :root{ --item-size: 128px; --v-pad: 16px; }
   .open-btn{ min-width: 260px; height: 52px; font-size: 18px; }
 }
 

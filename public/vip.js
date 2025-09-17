@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const footerBar = document.getElementById("footer-bar");
   const spinBtn = document.getElementById("spinBtn");
   const gallery = document.getElementById("gallery");
+  const sliderContent = document.getElementById("sliderContent");
 
   const tg = window.Telegram?.WebApp;
   const IS_TG = !!tg;
@@ -33,27 +34,42 @@ document.addEventListener("DOMContentLoaded", () => {
   let isSpinning = false;
   let lastCenteredIndex = null;
 
+  /* ---------- Footer dynamic sizing ---------- */
+  function syncFooter() {
+    // измеряем реальную высоту футера (включая safe-area padding)
+    const h = footerBar?.offsetHeight || 0;
+    document.documentElement.style.setProperty("--footer-h", `${h}px`);
+    // буфер для контента модалки поверх футера
+    if (sliderContent) {
+      sliderContent.style.paddingBottom = `calc(16px + ${h}px)`;
+      sliderContent.style.maxHeight = `calc(100vh - ${h}px - 24px)`;
+    }
+  }
+
+  // на всякий случай — если env(safe-area-inset-bottom) меняется
+  const ro = ("ResizeObserver" in window) ? new ResizeObserver(syncFooter) : null;
+  ro?.observe(footerBar);
+
+  window.addEventListener("resize", syncFooter);
+  window.addEventListener("orientationchange", syncFooter);
+  if (IS_TG && tg.onEvent) {
+    tg.onEvent("viewportChanged", syncFooter);
+  }
+
+  /* ---------- Helpers ---------- */
   function createImg(gift) {
     const img = document.createElement("img");
     img.src = STATIC_PATH + gift.file;
     img.alt = gift.name;
-    img.width = 80;
-    img.height = 80;
-    img.loading = "lazy";
-    img.decoding = "async";
+    img.width = 80; img.height = 80;
+    img.loading = "lazy"; img.decoding = "async";
     return img;
   }
+  function preloadImages(list) { list.forEach(g => { const i = new Image(); i.src = STATIC_PATH + g.file; }); }
 
-  function preloadImages(list) {
-    list.forEach(g => { const i = new Image(); i.src = STATIC_PATH + g.file; });
-  }
-
-  // учитываем только горизонтальные поля
   function getMetrics() {
     const sample = roulette.querySelector(".roulette-item");
-    if (!sample) {
-      return { itemInnerW: 0, itemFullW: 0, firstLeftMargin: 0, contW: rouletteContainer.clientWidth };
-    }
+    if (!sample) return { itemInnerW: 0, itemFullW: 0, firstLeftMargin: 0, contW: rouletteContainer.clientWidth };
     const rect = sample.getBoundingClientRect();
     const cs = getComputedStyle(sample);
     const ml = parseFloat(cs.marginLeft) || 0;
@@ -63,13 +79,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const contW = rouletteContainer.clientWidth;
     return { itemInnerW, itemFullW, firstLeftMargin: ml, contW };
   }
-
   function translateForIndex(index) {
     const { itemInnerW, itemFullW, firstLeftMargin, contW } = getMetrics();
     const itemCenterFromStart = firstLeftMargin + index * itemFullW + itemInnerW / 2;
     return itemCenterFromStart - contW / 2;
   }
-
   function waitTransitionEnd(el) {
     return new Promise((resolve) => {
       const done = () => { el.removeEventListener("transitionend", done, true); resolve(); };
@@ -77,6 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  /* ---------- UI fill ---------- */
   function fillGallery() {
     gallery.innerHTML = "";
     gifts.forEach(gift => {
@@ -101,6 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
     roulette.style.transition = "";
   }
 
+  /* ---------- Modal ---------- */
   function openSlider() {
     slider.classList.add("is-open");
     document.body.classList.add("no-scroll");
@@ -113,14 +129,11 @@ document.addEventListener("DOMContentLoaded", () => {
       void roulette.offsetHeight;
       roulette.style.transition = "";
     }
-    // (опционально) скрыть кастомный футер и показать TG MainButton — можно включить позже
-    if (IS_TG) footerBar.style.display = "none";
+    syncFooter(); // критично: подогнать футер под TG-вебвью
   }
-
   function closeSlider() {
     slider.classList.remove("is-open");
     document.body.classList.remove("no-scroll");
-    if (IS_TG) footerBar.style.display = "";
   }
 
   vipCase.addEventListener("click", openSlider);
@@ -133,6 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.key === "Escape" && slider.classList.contains("is-open")) closeSlider();
   });
 
+  /* ---------- Spin ---------- */
   async function handleSpin() {
     if (isSpinning) return;
     isSpinning = true;
@@ -178,12 +192,13 @@ document.addEventListener("DOMContentLoaded", () => {
     } finally {
       isSpinning = false;
       spinBtn.disabled = false;
+      syncFooter(); // если TG изменил viewport при алерте
     }
   }
 
   spinBtn.addEventListener("click", handleSpin);
 
-  // Перецентрировать при ресайзе/смене ориентации
+  /* ---------- Recenter & footer updates ---------- */
   const recenter = () => {
     if (!slider.classList.contains("is-open")) return;
     if (lastCenteredIndex == null) return;
@@ -193,11 +208,13 @@ document.addEventListener("DOMContentLoaded", () => {
     roulette.style.transform = `translateX(-${Math.max(0, t)}px)`;
     void roulette.offsetHeight;
     roulette.style.transition = "";
+    syncFooter();
   };
   window.addEventListener("resize", recenter);
   window.addEventListener("orientationchange", recenter);
 
-  // init
+  /* ---------- init ---------- */
   preloadImages(gifts);
   fillGallery();
+  syncFooter(); // первичный расчёт
 });
