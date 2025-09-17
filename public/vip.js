@@ -20,9 +20,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const resultImg = document.getElementById("resultImg");
   const resultName = document.getElementById("resultName");
   const resultAmount = document.getElementById("resultAmount");
-  const tg = window.Telegram?.WebApp;
 
   // ----- Const
+  const tg = window.Telegram?.WebApp;
   const STATIC_PATH = "/static_webp/";
   const LOOP_COUNT = 24;
   const CYCLES_BEFORE_STOP = 6;
@@ -44,8 +44,25 @@ document.addEventListener("DOMContentLoaded", () => {
   let isSpinning = false;
   let lastCenteredIndex = null;
 
+  // ----- HAPTICS (Telegram + fallback)
+  const H = {
+    impact(style = "light") {
+      tg?.HapticFeedback?.impactOccurred?.(style);
+      if (!tg && "vibrate" in navigator) navigator.vibrate(12);
+    },
+    notify(type = "success") {
+      tg?.HapticFeedback?.notificationOccurred?.(type);
+      if (!tg && "vibrate" in navigator) navigator.vibrate([10, 40, 10]);
+    },
+    selection() {
+      tg?.HapticFeedback?.selectionChanged?.();
+      if (!tg && "vibrate" in navigator) navigator.vibrate(8);
+    }
+  };
+
   // ----- Utils
   function preloadImages(list) { list.forEach(g => { const i = new Image(); i.src = STATIC_PATH + g.file; }); }
+
   function getMetrics() {
     const sample = roulette.querySelector(".roulette-item");
     if (!sample) return { itemInnerW: 0, itemFullW: 0, firstLeftMargin: 0, contW: rouletteContainer.clientWidth };
@@ -58,16 +75,56 @@ document.addEventListener("DOMContentLoaded", () => {
     const contW = rouletteContainer.clientWidth;
     return { itemInnerW, itemFullW, firstLeftMargin: ml, contW };
   }
+
   function translateForIndex(index) {
     const { itemInnerW, itemFullW, firstLeftMargin, contW } = getMetrics();
     const itemCenterFromStart = firstLeftMargin + index * itemFullW + itemInnerW / 2;
     return itemCenterFromStart - contW / 2;
   }
+
   function waitTransitionEnd(el) {
     return new Promise((resolve) => {
       const done = () => { el.removeEventListener("transitionend", done, true); resolve(); };
       el.addEventListener("transitionend", done, true);
     });
+  }
+
+  // читать текущий translateX (px) из matrix
+  function readTranslateXPx(el) {
+    const tr = getComputedStyle(el).transform;
+    if (!tr || tr === "none") return 0;
+    const vals = tr.startsWith("matrix3d(") ? tr.slice(9, -1).split(",") : tr.slice(7, -1).split(",");
+    return parseFloat(vals[vals.length === 16 ? 12 : 4]) || 0;
+  }
+
+  // индекс элемента, чей центр под маркером сейчас
+  function indexUnderMarker() {
+    const { itemInnerW, itemFullW, firstLeftMargin, contW } = getMetrics();
+    const x = Math.abs(readTranslateXPx(roulette)); // сдвиг ленты влево
+    const centerCoord = x + contW / 2;
+    const idxFloat = (centerCoord - firstLeftMargin - itemInnerW / 2) / itemFullW;
+    return Math.max(0, Math.round(idxFloat));
+  }
+
+  // rAF-тикер: лёгкая вибрация при смене индекса под маркером
+  function startRouletteTicks() {
+    let rafId = null;
+    let lastIdx = -1;
+    let lastTs = 0;
+    const MIN_INTERVAL_MS = 35; // why: ограничим частоту
+
+    const loop = (ts) => {
+      const idx = indexUnderMarker();
+      if (idx !== lastIdx && ts - lastTs > MIN_INTERVAL_MS) {
+        lastIdx = idx;
+        lastTs = ts;
+        H.selection();
+      }
+      rafId = requestAnimationFrame(loop);
+    };
+
+    rafId = requestAnimationFrame(loop);
+    return () => { if (rafId) cancelAnimationFrame(rafId); };
   }
 
   // ----- Footer dynamic sizing
@@ -143,7 +200,6 @@ document.addEventListener("DOMContentLoaded", () => {
   sliderBackdrop.addEventListener("click", closeSlider);
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && slider.classList.contains("is-open")) closeSlider(); });
 
-
   // ----- Result sheet
   function openResult({ name, imgSrc, amount = 0 }) {
     resultImg.src = imgSrc;
@@ -154,7 +210,7 @@ document.addEventListener("DOMContentLoaded", () => {
     resultSheet.classList.remove("collapsed");
     resultSheet.classList.add("expanded");
     resultOverlay.setAttribute("aria-hidden", "false");
-    tg?.HapticFeedback?.notificationOccurred?.("success"); // why: нативный фидбек
+    // haptic for success уже даём в handleSpin() чтобы не дублировать
   }
   function closeResult() {
     resultSheet.classList.remove("expanded","collapsed");
@@ -176,8 +232,6 @@ document.addEventListener("DOMContentLoaded", () => {
   resultOverlay.addEventListener("click", (e) => {
     if (e.target === resultOverlay) closeResult();
   });
-
-  // простейший свайп вниз
   (() => {
     let startY = null, baseState = "expanded";
     const onStart = (e) => { startY = (e.touches?e.touches[0].clientY:e.clientY); baseState = resultSheet.classList.contains("collapsed") ? "collapsed" : "expanded"; };
@@ -192,6 +246,9 @@ document.addEventListener("DOMContentLoaded", () => {
     resultSheet.addEventListener("touchmove", onMove, {passive:true});
     resultSheet.addEventListener("touchend", onEnd);
   })();
+
+  // ----- Haptic on press "Открыть"
+  spinBtn.addEventListener("pointerdown", () => H.impact("medium"));
 
   // ----- Spin
   async function handleSpin() {
@@ -220,25 +277,36 @@ document.addEventListener("DOMContentLoaded", () => {
       void roulette.offsetHeight;
 
       const t = translateForIndex(targetIndex);
+
+      // запустить «тики» до старта анимации
+      const stopTicks = startRouletteTicks();
+
       roulette.style.transition = ""; // CSS
       roulette.style.transform = `translateX(-${Math.max(0, t)}px)`;
 
       await waitTransitionEnd(roulette);
 
+      // остановить тики и выдать сильную вибрацию выигрыша
+      stopTicks();
+      H.impact("heavy");
+      H.notify("success");
+
+      // фиксируем позицию без дёрганья (на случай субпикселей)
       roulette.style.transition = "none";
       roulette.style.transform = `translateX(-${Math.max(0, translateForIndex(targetIndex))}px)`;
       void roulette.offsetHeight;
       roulette.style.transition = "";
 
-      // === Показ победного шита ===
+      // показать шит победы
       const giftMeta = gifts[prizeIndex];
       openResult({
         name: giftMeta?.name || prize,
         imgSrc: STATIC_PATH + (giftMeta?.file || ""),
-        amount: 0 // если появится расчет награды — подставим сюда
+        amount: 0
       });
     } catch (err) {
       console.error(err);
+      H.notify("error");
       alert("Ошибка: " + err.message);
     } finally {
       isSpinning = false;
