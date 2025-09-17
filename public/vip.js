@@ -23,6 +23,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ----- Const
   const tg = window.Telegram?.WebApp;
+  tg?.ready?.(); // why: активируем WebApp-фичи (в т.ч. HapticFeedback) в TG вебвью
+  const PLATFORM = tg?.platform || "web"; // "ios" | "android" | "web" | "macos"
+  const SUPPORTS_TG_HAPTICS = !!tg?.HapticFeedback && (PLATFORM === "ios" || PLATFORM === "android");
+
   const STATIC_PATH = "/static_webp/";
   const LOOP_COUNT = 24;
   const CYCLES_BEFORE_STOP = 6;
@@ -47,22 +51,23 @@ document.addEventListener("DOMContentLoaded", () => {
   // ----- HAPTICS (Telegram + fallback)
   const H = {
     impact(style = "light") {
-      tg?.HapticFeedback?.impactOccurred?.(style);
-      if (!tg && "vibrate" in navigator) navigator.vibrate(12);
+      try { if (SUPPORTS_TG_HAPTICS) tg.HapticFeedback.impactOccurred(style); } catch {}
+      if (!SUPPORTS_TG_HAPTICS && "vibrate" in navigator) navigator.vibrate(12);
     },
     notify(type = "success") {
-      tg?.HapticFeedback?.notificationOccurred?.(type);
-      if (!tg && "vibrate" in navigator) navigator.vibrate([10, 40, 10]);
+      try { if (SUPPORTS_TG_HAPTICS) tg.HapticFeedback.notificationOccurred(type); } catch {}
+      if (!SUPPORTS_TG_HAPTICS && "vibrate" in navigator) navigator.vibrate([10, 40, 10]);
     },
     selection() {
-      tg?.HapticFeedback?.selectionChanged?.();
-      if (!tg && "vibrate" in navigator) navigator.vibrate(8);
+      try { if (SUPPORTS_TG_HAPTICS) tg.HapticFeedback.selectionChanged(); } catch {}
+      if (!SUPPORTS_TG_HAPTICS && "vibrate" in navigator) navigator.vibrate(8);
     }
   };
+  // быстрая диагностика в консоль
+  console.log("[haptics] platform:", PLATFORM, "tg:", !!tg, "supportsTG:", SUPPORTS_TG_HAPTICS);
 
   // ----- Utils
   function preloadImages(list) { list.forEach(g => { const i = new Image(); i.src = STATIC_PATH + g.file; }); }
-
   function getMetrics() {
     const sample = roulette.querySelector(".roulette-item");
     if (!sample) return { itemInnerW: 0, itemFullW: 0, firstLeftMargin: 0, contW: rouletteContainer.clientWidth };
@@ -75,49 +80,40 @@ document.addEventListener("DOMContentLoaded", () => {
     const contW = rouletteContainer.clientWidth;
     return { itemInnerW, itemFullW, firstLeftMargin: ml, contW };
   }
-
   function translateForIndex(index) {
     const { itemInnerW, itemFullW, firstLeftMargin, contW } = getMetrics();
     const itemCenterFromStart = firstLeftMargin + index * itemFullW + itemInnerW / 2;
     return itemCenterFromStart - contW / 2;
   }
-
   function waitTransitionEnd(el) {
     return new Promise((resolve) => {
       const done = () => { el.removeEventListener("transitionend", done, true); resolve(); };
       el.addEventListener("transitionend", done, true);
     });
   }
-
-  // читать текущий translateX (px) из matrix
   function readTranslateXPx(el) {
     const tr = getComputedStyle(el).transform;
     if (!tr || tr === "none") return 0;
     const vals = tr.startsWith("matrix3d(") ? tr.slice(9, -1).split(",") : tr.slice(7, -1).split(",");
     return parseFloat(vals[vals.length === 16 ? 12 : 4]) || 0;
   }
-
-  // индекс элемента, чей центр под маркером сейчас
   function indexUnderMarker() {
     const { itemInnerW, itemFullW, firstLeftMargin, contW } = getMetrics();
-    const x = Math.abs(readTranslateXPx(roulette)); // сдвиг ленты влево
+    const x = Math.abs(readTranslateXPx(roulette));
     const centerCoord = x + contW / 2;
     const idxFloat = (centerCoord - firstLeftMargin - itemInnerW / 2) / itemFullW;
     return Math.max(0, Math.round(idxFloat));
   }
-
-  // rAF-тикер: лёгкая вибрация при смене индекса под маркером
   function startRouletteTicks() {
     let rafId = null;
     let lastIdx = -1;
     let lastTs = 0;
-    const MIN_INTERVAL_MS = 35; // why: ограничим частоту
+    const MIN_INTERVAL_MS = 50; // чуть реже, чтобы система не душила вибрацию
 
     const loop = (ts) => {
       const idx = indexUnderMarker();
       if (idx !== lastIdx && ts - lastTs > MIN_INTERVAL_MS) {
-        lastIdx = idx;
-        lastTs = ts;
+        lastIdx = idx; lastTs = ts;
         H.selection();
       }
       rafId = requestAnimationFrame(loop);
@@ -140,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
   ro?.observe(footerBar);
   window.addEventListener("resize", syncFooter);
   window.addEventListener("orientationchange", syncFooter);
-  if (tg?.onEvent) tg.onEvent("viewportChanged", syncFooter);
+  tg?.onEvent?.("viewportChanged", syncFooter);
 
   // ----- Fill
   function createImg(gift) {
@@ -210,7 +206,6 @@ document.addEventListener("DOMContentLoaded", () => {
     resultSheet.classList.remove("collapsed");
     resultSheet.classList.add("expanded");
     resultOverlay.setAttribute("aria-hidden", "false");
-    // haptic for success уже даём в handleSpin() чтобы не дублировать
   }
   function closeResult() {
     resultSheet.classList.remove("expanded","collapsed");
@@ -225,13 +220,11 @@ document.addEventListener("DOMContentLoaded", () => {
       resultSheet.classList.remove("expanded"); resultSheet.classList.add("collapsed");
     }
   }
-
-  // tap/drag
   sheetHandle.addEventListener("click", toggleCollapse);
   resultOk.addEventListener("click", closeResult);
-  resultOverlay.addEventListener("click", (e) => {
-    if (e.target === resultOverlay) closeResult();
-  });
+  resultOverlay.addEventListener("click", (e) => { if (e.target === resultOverlay) closeResult(); });
+
+  // свайп хэндла (как было)
   (() => {
     let startY = null, baseState = "expanded";
     const onStart = (e) => { startY = (e.touches?e.touches[0].clientY:e.clientY); baseState = resultSheet.classList.contains("collapsed") ? "collapsed" : "expanded"; };
@@ -278,7 +271,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const t = translateForIndex(targetIndex);
 
-      // запустить «тики» до старта анимации
+      // старт "тиков" перед анимацией
       const stopTicks = startRouletteTicks();
 
       roulette.style.transition = ""; // CSS
@@ -286,18 +279,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
       await waitTransitionEnd(roulette);
 
-      // остановить тики и выдать сильную вибрацию выигрыша
+      // стоп тики + сильная вибрация выигрыша
       stopTicks();
       H.impact("heavy");
       H.notify("success");
 
-      // фиксируем позицию без дёрганья (на случай субпикселей)
       roulette.style.transition = "none";
       roulette.style.transform = `translateX(-${Math.max(0, translateForIndex(targetIndex))}px)`;
       void roulette.offsetHeight;
       roulette.style.transition = "";
 
-      // показать шит победы
       const giftMeta = gifts[prizeIndex];
       openResult({
         name: giftMeta?.name || prize,
