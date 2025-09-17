@@ -57,10 +57,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // ⚡ Быстрая серия пульсов 1s, в 2 раза быстрее (STEP=30ms)
     winBurst1sFast() {
       this._clearTimers();
-      const TOTAL_MS = 1000;
+      const TOTAL_MS = 500;
 
       if (SUPPORTS_TG_HAPTICS) {
-        const STEP = 30; // why: быстрее прежних 60мс
+        const STEP = 15; // why: быстрее прежних 60мс
         let elapsed = 0;
         try { tg.HapticFeedback.notificationOccurred("success"); } catch {}
         const pulse = () => {
@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
         this._after(TOTAL_MS + 40, () => this._clearTimers());
       } else if ("vibrate" in navigator) {
         // Очень частая дрожь: ~12ms on / ~8ms off до 1s
-        const ON = 12, OFF = 8;
+        const ON = 8, OFF = 4;
         const pattern = [];
         let sum = 0;
         while (sum < TOTAL_MS) {
