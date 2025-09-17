@@ -1,8 +1,17 @@
 /* filepath: public/style.css */
 
-/* ===== База для мобилки ===== */
-* { box-sizing: border-box; }
-html, body {
+/* ===== Vars ===== */
+:root{
+  --footer-h: 64px;
+  --item-size: 112px;   /* размер ячейки рулетки */
+  --h-gap: 10px;        /* горизонтальный зазор между ячейками */
+  --v-pad: 14px;        /* вертикальные поля контейнера (симметрия) */
+  --border-w: 2px;      /* толщина белой рамки */
+}
+
+/* ===== База ===== */
+*{ box-sizing: border-box; }
+html, body{
   height: 100%;
   margin: 0;
   background: #111;
@@ -10,20 +19,19 @@ html, body {
   font-family: -apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif;
   overscroll-behavior: none;
 }
-:root { --footer-h: 64px; }
-body.no-scroll { overflow: hidden; touch-action: none; }
-a, button { touch-action: manipulation; }
-*:focus-visible { outline: 2px solid #4da3ff; outline-offset: 2px; }
-* { -webkit-tap-highlight-color: transparent; }
+body.no-scroll{ overflow: hidden; touch-action: none; }
+a,button{ touch-action: manipulation; }
+*:focus-visible{ outline: 2px solid #4da3ff; outline-offset: 2px; }
+*{ -webkit-tap-highlight-color: transparent; }
 
-.container {
+.container{
   height: 100%;
   display: flex; align-items: center; justify-content: center;
   text-align: center;
 }
 
 /* ===== Карточка ===== */
-.case {
+.case{
   border: 2px solid #fff;
   padding: 20px 24px;
   cursor: pointer;
@@ -32,20 +40,20 @@ a, button { touch-action: manipulation; }
   transition: transform .18s ease, box-shadow .18s ease;
   box-shadow: 0 6px 24px rgba(0,0,0,.35);
 }
-.case:hover, .case:active { transform: scale(1.03); }
+.case:hover,.case:active{ transform: scale(1.03); }
 
 /* ===== Модалка ===== */
-.slider {
+.slider{
   display: none; position: fixed; inset: 0; z-index: 1000;
   align-items: center; justify-content: center;
 }
-.slider.is-open { display: flex; }
+.slider.is-open{ display: flex; }
 
-.slider-backdrop {
+.slider-backdrop{
   position: absolute; inset: 0;
   background: rgba(0,0,0,.6); backdrop-filter: blur(2px);
 }
-.slider-content {
+.slider-content{
   position: relative; z-index: 1; background: #222;
   padding: 20px;
   border-radius: 14px;
@@ -53,47 +61,65 @@ a, button { touch-action: manipulation; }
   max-height: calc(100vh - var(--footer-h) - env(safe-area-inset-bottom) - 24px);
   overflow-y: auto; -webkit-overflow-scrolling: touch;
   box-shadow: 0 10px 30px rgba(0,0,0,.5);
-  /* why: чтобы контент не прятался за фикс-футером */
+  /* чтобы контент не прятался под фикс-футер */
   padding-bottom: calc(16px + var(--footer-h) + env(safe-area-inset-bottom));
 }
 
-/* крестик вправо */
-.close {
-  position: absolute; top: 35px; right: 20px;
-  width: 36px; height: 36px;
+/* крестик справа */
+.close{
+  position: absolute; top: 8px; right: 8px;
+  width: 36px; height: 36px; line-height: 1;
   display: inline-flex; align-items: center; justify-content: center;
   border-radius: 10px; border: 0; cursor: pointer;
-  background: #2c2c2c; color: #fff; font-size: 24px; line-height: 1;
+  background: #2c2c2c; color: #fff; font-size: 24px;
 }
 
 /* ===== Рулетка ===== */
-.roulette-container {
+.roulette-container{
   position: relative; overflow: hidden; width: 100%;
-  height: 140px; margin: 16px 0 8px;
-  border: 2px solid #fff; border-radius: 12px; background: #000;
+  /* симметрия по вертикали через padding, а не margin у элементов */
+  height: calc(var(--item-size) + 2*var(--v-pad) + 2*var(--border-w));
+  padding-block: var(--v-pad);
+  border: var(--border-w) solid #fff;
+  border-radius: 12px;
+  background: #000;
 }
-.roulette {
-  display: flex; will-change: transform; transform: translateZ(0);
+
+.roulette{
+  display: flex;
+  will-change: transform;
+  transform: translateZ(0);
   transition: transform 4s cubic-bezier(0.25, 1, 0.5, 1);
 }
-.roulette-item {
+
+/* ВАЖНО: без вертикальных margin; только горизонтальные */
+.roulette-item{
   flex: 0 0 auto;
-  min-width: 112px; height: 112px;
-  background: #1f1f1f; margin: 14px 10px;
-  border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  width: var(--item-size);
+  height: var(--item-size);
+  margin: 0 var(--h-gap);
+  background: #1f1f1f;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
   user-select: none;
 }
-.roulette-item img {
-  width: 88px; height: 88px; object-fit: contain; image-rendering: -webkit-optimize-contrast;
+.roulette-item img{
+  width: calc(var(--item-size) - 24px);
+  height: calc(var(--item-size) - 24px);
+  object-fit: contain;
+  image-rendering: -webkit-optimize-contrast;
 }
-.roulette-marker {
+
+/* Маркер по центру */
+.roulette-marker{
   position: absolute; top: 0; left: 50%;
-  width: 2px; height: 100%; background: red; transform: translateX(-50%);
+  width: 2px; height: 100%; background: red;
+  transform: translateX(-50%);
   z-index: 10; pointer-events: none; opacity: .85;
 }
 
 /* ===== Футер (fallback вне Telegram) ===== */
-#footer-bar {
+#footer-bar{
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 1001;
   height: var(--footer-h);
   display: flex; align-items: center; justify-content: center;
@@ -101,35 +127,36 @@ a, button { touch-action: manipulation; }
   padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
   backdrop-filter: blur(6px);
 }
-.open-btn {
+.open-btn{
   min-width: 220px; height: 48px; border: 0; border-radius: 12px;
   background: #28a745; color: #fff; font-size: 18px; font-weight: 700; letter-spacing: .3px;
   cursor: pointer; transition: transform .08s ease, background .15s ease;
 }
-.open-btn:active { transform: translateY(1px); }
-.open-btn[disabled] { opacity: .6; cursor: not-allowed; }
+.open-btn:active{ transform: translateY(1px); }
+.open-btn[disabled]{ opacity: .6; cursor: not-allowed; }
 
 /* ===== Галерея ===== */
-.gallery {
+.gallery{
   display: grid; grid-template-columns: repeat(3, 1fr);
   gap: 10px; margin-top: 10px;
 }
-.gallery div {
+.gallery div{
   background: #1f1f1f; padding: 10px; border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
 }
-.gallery img { width: 80px; height: 80px; object-fit: contain; }
+.gallery img{ width: 80px; height: 80px; object-fit: contain; }
 
 /* ===== Responsive ===== */
-@media (max-width: 600px) {
-  .roulette-container { height: 170px; }
-  .roulette-item { min-width: 128px; height: 128px; }
-  .roulette-item img { width: 100px; height: 100px; }
-  .open-btn { min-width: 260px; height: 52px; font-size: 18px; }
+@media (max-width: 600px){
+  :root{
+    --item-size: 128px;
+    --v-pad: 16px; /* оставляем симметрию */
+  }
+  .open-btn{ min-width: 260px; height: 52px; font-size: 18px; }
 }
 
 /* ===== Reduced motion ===== */
-@media (prefers-reduced-motion: reduce) {
-  .roulette { transition-duration: 1.2s; }
-  .case { transition: none; }
+@media (prefers-reduced-motion: reduce){
+  .roulette{ transition-duration: 1.2s; }
+  .case{ transition: none; }
 }

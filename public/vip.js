@@ -33,35 +33,43 @@ document.addEventListener("DOMContentLoaded", () => {
   let isSpinning = false;
   let lastCenteredIndex = null;
 
-  // ===== Helpers
   function createImg(gift) {
     const img = document.createElement("img");
     img.src = STATIC_PATH + gift.file;
     img.alt = gift.name;
-    img.width = 80; img.height = 80;
-    img.loading = "lazy"; img.decoding = "async";
+    img.width = 80;
+    img.height = 80;
+    img.loading = "lazy";
+    img.decoding = "async";
     return img;
   }
+
   function preloadImages(list) {
     list.forEach(g => { const i = new Image(); i.src = STATIC_PATH + g.file; });
   }
+
+  // учитываем только горизонтальные поля
   function getMetrics() {
     const sample = roulette.querySelector(".roulette-item");
-    if (!sample) return { itemInnerW: 0, itemFullW: 0, firstLeftMargin: 0, contW: rouletteContainer.clientWidth };
+    if (!sample) {
+      return { itemInnerW: 0, itemFullW: 0, firstLeftMargin: 0, contW: rouletteContainer.clientWidth };
+    }
     const rect = sample.getBoundingClientRect();
     const cs = getComputedStyle(sample);
     const ml = parseFloat(cs.marginLeft) || 0;
     const mr = parseFloat(cs.marginRight) || 0;
     const itemInnerW = rect.width;
-    const itemFullW = rect.width + ml + mr;
+    const itemFullW  = rect.width + ml + mr;
     const contW = rouletteContainer.clientWidth;
     return { itemInnerW, itemFullW, firstLeftMargin: ml, contW };
   }
+
   function translateForIndex(index) {
     const { itemInnerW, itemFullW, firstLeftMargin, contW } = getMetrics();
     const itemCenterFromStart = firstLeftMargin + index * itemFullW + itemInnerW / 2;
     return itemCenterFromStart - contW / 2;
   }
+
   function waitTransitionEnd(el) {
     return new Promise((resolve) => {
       const done = () => { el.removeEventListener("transitionend", done, true); resolve(); };
@@ -69,7 +77,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ===== UI fill
   function fillGallery() {
     gallery.innerHTML = "";
     gifts.forEach(gift => {
@@ -78,6 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
       gallery.appendChild(div);
     });
   }
+
   function fillRoulette() {
     roulette.innerHTML = "";
     for (let i = 0; i < gifts.length * LOOP_COUNT; i++) {
@@ -93,42 +101,6 @@ document.addEventListener("DOMContentLoaded", () => {
     roulette.style.transition = "";
   }
 
-  // ===== Telegram MainButton / BackButton
-  function showTGButtons() {
-    if (!IS_TG) return;
-    tg.expand(); // why: использовать всю высоту
-    tg.BackButton.show();
-    tg.BackButton.onClick(closeSlider);
-
-    tg.MainButton.setParams({ text: "Открыть", is_active: true, is_visible: true });
-    tg.MainButton.show();
-    tg.MainButton.onClick(handleSpinClick);
-    // скрываем кастомный футер
-    footerBar.style.display = "none";
-  }
-  function hideTGButtons() {
-    if (!IS_TG) return;
-    tg.MainButton.offClick(handleSpinClick);
-    tg.MainButton.hide();
-    tg.BackButton.offClick(closeSlider);
-    tg.BackButton.hide();
-    // вернём кастомный футер для браузера
-    footerBar.style.display = "";
-  }
-  function tgSpinBusy(busy) {
-    if (!IS_TG) return;
-    if (busy) {
-      tg.MainButton.disable();
-      if (tg.MainButton.showProgress) tg.MainButton.showProgress();
-      tg.HapticFeedback?.impactOccurred?.("heavy");
-    } else {
-      if (tg.MainButton.hideProgress) tg.MainButton.hideProgress();
-      tg.MainButton.enable();
-      tg.HapticFeedback?.notificationOccurred?.("success");
-    }
-  }
-
-  // ===== Modal open/close
   function openSlider() {
     slider.classList.add("is-open");
     document.body.classList.add("no-scroll");
@@ -141,20 +113,30 @@ document.addEventListener("DOMContentLoaded", () => {
       void roulette.offsetHeight;
       roulette.style.transition = "";
     }
-    showTGButtons();
+    // (опционально) скрыть кастомный футер и показать TG MainButton — можно включить позже
+    if (IS_TG) footerBar.style.display = "none";
   }
+
   function closeSlider() {
     slider.classList.remove("is-open");
     document.body.classList.remove("no-scroll");
-    hideTGButtons();
+    if (IS_TG) footerBar.style.display = "";
   }
 
-  // ===== Spin (shared handler for TG MainButton и обычной кнопки)
-  async function handleSpinClick() {
+  vipCase.addEventListener("click", openSlider);
+  vipCase.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openSlider(); }
+  });
+  closeBtn.addEventListener("click", closeSlider);
+  sliderBackdrop.addEventListener("click", closeSlider);
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && slider.classList.contains("is-open")) closeSlider();
+  });
+
+  async function handleSpin() {
     if (isSpinning) return;
     isSpinning = true;
     spinBtn.disabled = true;
-    tgSpinBusy(true);
 
     try {
       const res = await fetch("/api/case/vip", {
@@ -194,24 +176,12 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error(err);
       alert("Ошибка: " + err.message);
     } finally {
-      tgSpinBusy(false);
       isSpinning = false;
       spinBtn.disabled = false;
     }
   }
 
-  // ===== Wire events
-  vipCase.addEventListener("click", openSlider);
-  vipCase.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openSlider(); }
-  });
-  closeBtn.addEventListener("click", closeSlider);
-  sliderBackdrop.addEventListener("click", closeSlider);
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && slider.classList.contains("is-open")) closeSlider();
-  });
-  // fallback кнопка вне Telegram
-  spinBtn.addEventListener("click", handleSpinClick);
+  spinBtn.addEventListener("click", handleSpin);
 
   // Перецентрировать при ресайзе/смене ориентации
   const recenter = () => {
