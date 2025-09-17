@@ -1,182 +1,84 @@
 /* filepath: public/style.css */
-/* ===== Theme (Telegram dark-ish) ===== */
 :root{
-  --bg: #0e1116;
-  --bg-elev: #151a22;
-  --bg-elev-2: #1c2330;
-  --panel: #202938;
-  --panel-2:#262f40;
-  --text: #e7ebf0;
-  --text-dim:#aab2bf;
-  --accent:#3390ec;
-  --accent-press:#2b7bdc;
-  --border:#2d3445;
-  --marker:#3390ec;
-  --success:#23c552;
-  --radius:16px;
+  --bg:#0e1116; --bg-elev:#151a22; --bg-elev-2:#1c2330;
+  --panel:#202938; --panel-2:#262f40;
+  --text:#e7ebf0; --text-dim:#aab2bf;
+  --accent:#3390ec; --accent-press:#2b7bdc;
+  --border:#2d3445; --marker:#3390ec; --radius:16px;
+  --footer-h: 96px; /* fallback */
 }
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  background: var(--bg);
-  color: var(--text);
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
   display:flex; justify-content:center; align-items:center;
-  margin:0;
-  -webkit-tap-highlight-color: transparent;
+  -webkit-tap-highlight-color:transparent;
 }
 .no-scroll{overflow:hidden}
 .container{ text-align:center; padding:16px }
 
-/* ===== Case card ===== */
-.case{
-  background: var(--bg-elev);
-  border:1px solid var(--border);
-  border-radius: var(--radius);
-  padding:20px;
-  cursor:pointer;
-  transition: transform .15s ease, box-shadow .15s ease;
-  box-shadow: 0 4px 20px rgba(0,0,0,.25);
-}
-.case:hover{ transform: translateY(-2px) }
-.case h2{ margin:0 0 8px }
-.case p{ margin:0; color:var(--text-dim) }
+/* Case */
+.case{ background:var(--bg-elev); border:1px solid var(--border);
+  border-radius:var(--radius); padding:20px; cursor:pointer; box-shadow:0 4px 20px rgba(0,0,0,.25) }
+.case p{ color:var(--text-dim); margin:0 }
 
-/* ===== Slider ===== */
-.slider{
-  display:none;
-  position:fixed; inset:0;
-  z-index:1000;
-}
+/* Slider */
+.slider{ display:none; position:fixed; inset:0; z-index:1000 }
 .slider.is-open{ display:block }
-.slider-backdrop{
-  position:absolute; inset:0; background: rgba(0,0,0,.6); backdrop-filter: blur(2px);
-}
+.slider-backdrop{ position:absolute; inset:0; background:rgba(0,0,0,.6); backdrop-filter:blur(2px) }
 .slider-content{
-  position:absolute; inset:auto 0 0 0;
-  background: var(--bg-elev);
-  border-top-left-radius: 24px; border-top-right-radius: 24px;
-  border-top:1px solid var(--border);
-  width:100%;
-  max-height: calc(100vh - 24px);
-  overflow:auto;
-  padding:20px 16px 96px;
-  -webkit-overflow-scrolling: touch;
+  position:absolute; inset:auto 0 0 0; background:var(--bg-elev);
+  border-top:1px solid var(--border); border-top-left-radius:24px; border-top-right-radius:24px;
+  width:100%; max-height:calc(100vh - 24px); overflow:auto; -webkit-overflow-scrolling:touch;
+  padding:16px 16px calc(var(--footer-h) + 16px); /* место под фиксированный футер */
 }
-.close{
-  position:absolute; top:20px; right:20px;
-  width:36px; height:36px; border-radius:10px;
-  border:1px solid var(--border); background: var(--bg);
-  color:var(--text); cursor:pointer; font-size:18px; line-height:34px;
-}
-.header-row{ display:flex; align-items:center; gap:8px; margin:8px 4px 12px }
-.title{ margin:0; font-size:24px }
-.mode-pill{
-  margin-left:auto;
-  background: var(--panel);
-  color: var(--text);
-  border:1px solid var(--border);
-  border-radius: 999px;
-  padding:6px 10px; font-size:14px;
-}
+.close{ position:absolute; right:12px; top:12px; width:36px; height:36px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text) }
+.title{ margin:8px 4px 12px }
 
-/* ===== Roulette ===== */
+/* Roulette */
 .roulette-container{
-  position:relative; overflow:hidden;
-  width:100%; height:140px; margin:12px 0 16px;
-  border:1px solid var(--border); border-radius: 18px;
-  background: var(--bg-elev-2);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
-  will-change: transform;
+  position:relative; overflow:hidden; width:100%; height:160px; margin:8px 0 12px;
+  border:1px solid var(--border); border-radius:18px; background:var(--bg-elev-2);
 }
-.roulette{
-  display:flex; will-change: transform;
-  transition: transform 4s cubic-bezier(0.25, 1, 0.5, 1);
-  padding:0 8px;
-}
-.roulette-item{
-  min-width:128px; height:120px;
-  margin:10px 8px; border-radius:16px;
-  background: var(--panel);
-  display:flex; align-items:center; justify-content:center;
-  border:1px solid var(--border);
-  box-shadow: 0 2px 10px rgba(0,0,0,.25) inset;
-}
-.roulette-item img{ width:96px; height:96px; object-fit:contain }
-.roulette-marker{
-  position:absolute; top:10px; bottom:10px;
-  left:50%; width:2px; background: var(--marker);
-  transform: translateX(-50%);
-}
+.roulette{ display:flex; transition:transform 4s cubic-bezier(.25,1,.5,1); padding:0 8px }
+.roulette-item{ min-width:132px; height:128px; margin:10px 8px; border-radius:16px; background:var(--panel); border:1px solid var(--border); display:flex; align-items:center; justify-content:center }
+.roulette-item img{ width:100px; height:100px; object-fit:contain }
+.roulette-marker{ position:absolute; top:10px; bottom:10px; left:50%; width:2px; background:var(--marker); transform:translateX(-50%) }
 
-/* ===== Footer / Open button ===== */
-#footer-bar{
-  position:fixed; left:0; right:0;
-  bottom: env(safe-area-inset-bottom);
-  padding:12px 16px calc(12px + env(safe-area-inset-bottom));
-  background: linear-gradient(180deg, rgba(14,17,22,0) 0%, var(--bg-elev) 30%);
-  border-top:1px solid var(--border);
-  display:flex; justify-content:center;
-  z-index:1100;
-}
-.open-btn{
-  min-width:260px;
-  border-radius: 999px;
-  padding:14px 20px;
-  font-size:18px; font-weight:600;
-  color:#fff; background: var(--accent);
-  border:1px solid rgba(255,255,255,.18);
-  box-shadow: 0 6px 18px rgba(51,144,236,.35);
-  cursor:pointer; transition: transform .06s ease, background .12s ease;
-}
-.open-btn:active{ transform: translateY(1px); background: var(--accent-press) }
-
-/* ===== Gallery ===== */
+/* Gallery */
 .section-title{ margin:12px 6px 10px; color:var(--text-dim) }
-.gallery{
-  display:grid; grid-template-columns: repeat(3, 1fr);
-  gap:12px; margin-bottom: 16px;
-}
-.gallery div{
-  background: var(--panel);
-  border:1px solid var(--border);
-  border-radius:14px; height:120px;
-  display:flex; align-items:center; justify-content:center;
-}
+.gallery{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px }
+.gallery div{ background:var(--panel); border:1px solid var(--border); border-radius:14px; height:120px; display:flex; align-items:center; justify-content:center }
 .gallery img{ width:88px; height:88px }
 
-/* ===== Result sheet ===== */
-.result-overlay{ display:none; position:fixed; inset:0; z-index:1200; }
-.result-overlay.is-open{ display:block }
-.result-sheet{
-  position:absolute; left:0; right:0; bottom:0;
-  background: var(--bg-elev);
+/* FIXED FOOTER */
+#footer-bar{
+  position:fixed; left:0; right:0; bottom:0;
+  background:var(--bg-elev); /* непрозрачный, чтобы не просвечивало */
   border-top:1px solid var(--border);
-  border-top-left-radius:24px; border-top-right-radius:24px;
-  padding:16px 16px calc(16px + env(safe-area-inset-bottom));
+  padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+  z-index:1100; display:flex; justify-content:center;
+  box-shadow: 0 -8px 24px rgba(0,0,0,.45); /* why: перекрыть контент визуально */
 }
-.sheet-handle{
-  width:56px; height:6px; border-radius:999px; margin:4px auto 12px;
-  background:#5e6775;
+.open-btn{
+  min-width:260px; border-radius:999px; padding:14px 20px; font-size:18px; font-weight:600;
+  color:#fff; background:var(--accent); border:1px solid rgba(255,255,255,.18);
+  box-shadow:0 6px 18px rgba(51,144,236,.35); cursor:pointer; transition:transform .06s, background .12s
 }
-.result-title{ text-align:center; margin:4px 0 12px }
-.result-card{
-  width:140px; height:140px; margin:0 auto 10px;
-  background: var(--panel); border:1px solid var(--border); border-radius:22px;
-  display:flex; align-items:center; justify-content:center;
-}
-.result-card img{ width:110px; height:110px; object-fit:contain }
-.result-amount{ text-align:center; font-size:28px; margin:6px 0; }
-.result-amount .dim{ color:var(--text-dim) }
-.result-name{ text-align:center; color:var(--text-dim); margin-bottom:14px }
-.result-ok{
-  display:block; width:100%; border-radius:12px; padding:14px 16px;
-  background: var(--accent); color:#fff; font-weight:600; border:none;
-}
+.open-btn:active{ transform:translateY(1px); background:var(--accent-press) }
 
-/* ===== Mobile tweaks ===== */
-@media (max-width:600px){
-  .roulette-container{ height:160px }
-  .roulette-item{ min-width:132px; height:128px }
-  .roulette-item img{ width:100px; height:100px }
+/* Fullscreen result */
+.result-overlay{ display:none; position:fixed; inset:0; z-index:1200; background:rgba(0,0,0,.75); backdrop-filter:blur(2px); align-items:center; justify-content:center }
+.result-overlay.is-open{ display:flex }
+.result-sheet{ text-align:center; padding:16px }
+.result-title{ margin:0 0 10px }
+.result-card{
+  width:min(88vw,88vh); height:min(88vw,88vh);
+  background:var(--panel); border:1px solid var(--border); border-radius:24px;
+  display:flex; align-items:center; justify-content:center; margin:0 auto 12px;
 }
+.result-card img{ width:86%; height:86%; object-fit:contain }
+.result-amount{ font-size:28px; margin:6px 0 }
+.result-name{ color:var(--text-dim); margin-bottom:12px }
+.result-ok{ width:min(420px,90vw); border-radius:14px; padding:14px 16px; background:var(--accent); color:#fff; border:none; font-weight:600 }
