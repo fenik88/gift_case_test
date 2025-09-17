@@ -37,32 +37,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ----- HAPTICS
   const H = {
-    _timers: [], // why: чтобы отменять прежние цепочки
-    _clearTimers() {
-      this._timers.forEach(clearTimeout);
-      this._timers = [];
-    },
-    _after(delay, fn) {
-      const id = setTimeout(fn, delay);
-      this._timers.push(id);
-    },
-    _playTGSequence(steps) {
-      // шаг: { kind: "impact"|"notify"|"selection"|"delay", arg?: string, at: ms }
-      this._clearTimers();
-      for (const s of steps) {
-        if (s.kind === "delay") continue;
-        this._after(s.at, () => {
-          try {
-            if (s.kind === "impact") tg.HapticFeedback.impactOccurred(s.arg);
-            else if (s.kind === "notify") tg.HapticFeedback.notificationOccurred(s.arg);
-            else if (s.kind === "selection") tg.HapticFeedback.selectionChanged();
-          } catch {}
-        });
-      }
-      // авто-очистка таймеров после последнего шага
-      const total = Math.max(...steps.map(s => s.at || 0)) + 50;
-      this._after(total, () => this._clearTimers());
-    },
+    _timers: [],
+    _clearTimers() { this._timers.forEach(clearTimeout); this._timers = []; },
+    _after(delay, fn) { const id = setTimeout(fn, delay); this._timers.push(id); },
 
     impact(style = "light") {
       try { if (SUPPORTS_TG_HAPTICS) tg.HapticFeedback.impactOccurred(style); } catch {}
@@ -77,27 +54,34 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!SUPPORTS_TG_HAPTICS && "vibrate" in navigator) navigator.vibrate(8);
     },
 
-    // ДЛИННАЯ и СИЛЬНАЯ вибрация при выигрыше (~1.9s в TG, ~2s fallback)
-    winLong() {
+    // ⚡ Быстрая серия пульсов ~2s
+    winBurst2s() {
+      this._clearTimers();
+      const TOTAL_MS = 2000;
+
       if (SUPPORTS_TG_HAPTICS) {
-        // Ступенчатая цепочка: стартовый notify и серия heavy/rigid с растущими интервалами.
-        const seq = [
-          { kind: "notify", arg: "success", at: 0 },
-          { kind: "impact", arg: "heavy",  at: 100 },
-          { kind: "impact", arg: "heavy",  at: 220 },
-          { kind: "impact", arg: "rigid",  at: 360 },
-          { kind: "impact", arg: "heavy",  at: 520 },
-          { kind: "impact", arg: "rigid",  at: 700 },
-          { kind: "impact", arg: "heavy",  at: 900 },
-          { kind: "impact", arg: "rigid",  at: 1120 },
-          { kind: "impact", arg: "heavy",  at: 1360 },
-          { kind: "impact", arg: "heavy",  at: 1600 },
-          { kind: "impact", arg: "rigid",  at: 1850 },
-        ];
-        this._playTGSequence(seq);
+        // why: слишком частые вызовы могут душиться ОС; ~60мс — надёжный компромисс
+        const STEP = 60; // интервал между импульсами
+        let elapsed = 0;
+        try { tg.HapticFeedback.notificationOccurred("success"); } catch {}
+        const pulse = () => {
+          try { tg.HapticFeedback.impactOccurred("rigid"); } catch {}
+          elapsed += STEP;
+          if (elapsed < TOTAL_MS) this._after(STEP, pulse);
+        };
+        this._after(STEP, pulse);
+        this._after(TOTAL_MS + 50, () => this._clearTimers());
       } else if ("vibrate" in navigator) {
-        // Длинный/сильный паттерн (≈ 2.0s): on/off чередуются, «on» увеличиваются
-        navigator.vibrate([260, 110, 300, 120, 340, 140, 380, 160, 420]);
+        // Генерируем паттерн on/off до 2s (минимальные короткие интервалы)
+        const ON = 22, OFF = 18; // why: короткий, но ощущаемый импульс
+        const pattern = [];
+        let sum = 0;
+        while (sum < TOTAL_MS) {
+          pattern.push(ON); sum += ON;
+          if (sum >= TOTAL_MS) break;
+          pattern.push(OFF); sum += OFF;
+        }
+        navigator.vibrate(pattern);
       }
     }
   };
@@ -314,7 +298,7 @@ document.addEventListener("DOMContentLoaded", () => {
       await waitTransitionEnd(roulette);
 
       stopTicks();
-      H.winLong(); // <<< ДЛИННАЯ и СИЛЬНАЯ вибрация при выигрыше
+      H.winBurst2s(); // <<< 2 секунды быстрых вибраций с минимальными паузами
 
       roulette.style.transition = "none";
       roulette.style.transform = `translateX(-${Math.max(0, translateForIndex(targetIndex))}px)`;
