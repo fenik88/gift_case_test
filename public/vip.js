@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ----- Telegram + haptics detect
   const tg = window.Telegram?.WebApp;
-  tg?.ready?.(); // why: активирует WebApp-фичи
+  tg?.ready?.();
   const PLATFORM = tg?.platform || "web";
   const SUPPORTS_TG_HAPTICS = !!tg?.HapticFeedback && (PLATFORM === "ios" || PLATFORM === "android");
 
@@ -54,14 +54,13 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!SUPPORTS_TG_HAPTICS && "vibrate" in navigator) navigator.vibrate(8);
     },
 
-    // ⚡ Быстрая серия пульсов ~2s
-    winBurst2s() {
+    // ⚡ Быстрая серия пульсов 1s, в 2 раза быстрее (STEP=30ms)
+    winBurst1sFast() {
       this._clearTimers();
-      const TOTAL_MS = 2000;
+      const TOTAL_MS = 1000;
 
       if (SUPPORTS_TG_HAPTICS) {
-        // why: слишком частые вызовы могут душиться ОС; ~60мс — надёжный компромисс
-        const STEP = 60; // интервал между импульсами
+        const STEP = 30; // why: быстрее прежних 60мс
         let elapsed = 0;
         try { tg.HapticFeedback.notificationOccurred("success"); } catch {}
         const pulse = () => {
@@ -70,10 +69,10 @@ document.addEventListener("DOMContentLoaded", () => {
           if (elapsed < TOTAL_MS) this._after(STEP, pulse);
         };
         this._after(STEP, pulse);
-        this._after(TOTAL_MS + 50, () => this._clearTimers());
+        this._after(TOTAL_MS + 40, () => this._clearTimers());
       } else if ("vibrate" in navigator) {
-        // Генерируем паттерн on/off до 2s (минимальные короткие интервалы)
-        const ON = 22, OFF = 18; // why: короткий, но ощущаемый импульс
+        // Очень частая дрожь: ~12ms on / ~8ms off до 1s
+        const ON = 12, OFF = 8;
         const pattern = [];
         let sum = 0;
         while (sum < TOTAL_MS) {
@@ -148,7 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   function startRouletteTicks() {
     let rafId = null, lastIdx = -1, lastTs = 0;
-    const MIN_INTERVAL_MS = 70; // why: не душить ОС частотой
+    const MIN_INTERVAL_MS = 70;
     const loop = (ts) => {
       const idx = indexUnderMarker();
       if (idx !== lastIdx && ts - lastTs > MIN_INTERVAL_MS) {
@@ -298,7 +297,7 @@ document.addEventListener("DOMContentLoaded", () => {
       await waitTransitionEnd(roulette);
 
       stopTicks();
-      H.winBurst2s(); // <<< 2 секунды быстрых вибраций с минимальными паузами
+      H.winBurst1sFast(); // <<< 1 секунда, в 2 раза быстрее
 
       roulette.style.transition = "none";
       roulette.style.transform = `translateX(-${Math.max(0, translateForIndex(targetIndex))}px)`;
