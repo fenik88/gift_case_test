@@ -37,6 +37,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ----- HAPTICS
   const H = {
+    _timers: [], // why: чтобы отменять прежние цепочки
+    _clearTimers() {
+      this._timers.forEach(clearTimeout);
+      this._timers = [];
+    },
+    _after(delay, fn) {
+      const id = setTimeout(fn, delay);
+      this._timers.push(id);
+    },
+    _playTGSequence(steps) {
+      // шаг: { kind: "impact"|"notify"|"selection"|"delay", arg?: string, at: ms }
+      this._clearTimers();
+      for (const s of steps) {
+        if (s.kind === "delay") continue;
+        this._after(s.at, () => {
+          try {
+            if (s.kind === "impact") tg.HapticFeedback.impactOccurred(s.arg);
+            else if (s.kind === "notify") tg.HapticFeedback.notificationOccurred(s.arg);
+            else if (s.kind === "selection") tg.HapticFeedback.selectionChanged();
+          } catch {}
+        });
+      }
+      // авто-очистка таймеров после последнего шага
+      const total = Math.max(...steps.map(s => s.at || 0)) + 50;
+      this._after(total, () => this._clearTimers());
+    },
+
     impact(style = "light") {
       try { if (SUPPORTS_TG_HAPTICS) tg.HapticFeedback.impactOccurred(style); } catch {}
       if (!SUPPORTS_TG_HAPTICS && "vibrate" in navigator) navigator.vibrate(style === "heavy" ? 25 : 12);
@@ -49,19 +76,28 @@ document.addEventListener("DOMContentLoaded", () => {
       try { if (SUPPORTS_TG_HAPTICS) tg.HapticFeedback.impactOccurred("light"); } catch {}
       if (!SUPPORTS_TG_HAPTICS && "vibrate" in navigator) navigator.vibrate(8);
     },
-    // ДЛИННАЯ и СИЛЬНАЯ вибрация при выигрыше
+
+    // ДЛИННАЯ и СИЛЬНАЯ вибрация при выигрыше (~1.9s в TG, ~2s fallback)
     winLong() {
       if (SUPPORTS_TG_HAPTICS) {
-        try {
-          tg.HapticFeedback.notificationOccurred("success");
-          setTimeout(() => tg.HapticFeedback.impactOccurred("heavy"), 120);
-          setTimeout(() => tg.HapticFeedback.impactOccurred("heavy"), 260);
-          setTimeout(() => tg.HapticFeedback.impactOccurred("rigid"), 420);
-          setTimeout(() => tg.HapticFeedback.impactOccurred("heavy"), 580);
-        } catch {}
+        // Ступенчатая цепочка: стартовый notify и серия heavy/rigid с растущими интервалами.
+        const seq = [
+          { kind: "notify", arg: "success", at: 0 },
+          { kind: "impact", arg: "heavy",  at: 100 },
+          { kind: "impact", arg: "heavy",  at: 220 },
+          { kind: "impact", arg: "rigid",  at: 360 },
+          { kind: "impact", arg: "heavy",  at: 520 },
+          { kind: "impact", arg: "rigid",  at: 700 },
+          { kind: "impact", arg: "heavy",  at: 900 },
+          { kind: "impact", arg: "rigid",  at: 1120 },
+          { kind: "impact", arg: "heavy",  at: 1360 },
+          { kind: "impact", arg: "heavy",  at: 1600 },
+          { kind: "impact", arg: "rigid",  at: 1850 },
+        ];
+        this._playTGSequence(seq);
       } else if ("vibrate" in navigator) {
-        // Длинный паттерн: вибро/пауза чередуются
-        navigator.vibrate([160, 80, 180, 90, 220, 120, 160]);
+        // Длинный/сильный паттерн (≈ 2.0s): on/off чередуются, «on» увеличиваются
+        navigator.vibrate([260, 110, 300, 120, 340, 140, 380, 160, 420]);
       }
     }
   };
@@ -278,7 +314,7 @@ document.addEventListener("DOMContentLoaded", () => {
       await waitTransitionEnd(roulette);
 
       stopTicks();
-      H.winLong(); // <<< длинная и сильная вибрация при выигрыше
+      H.winLong(); // <<< ДЛИННАЯ и СИЛЬНАЯ вибрация при выигрыше
 
       roulette.style.transition = "none";
       roulette.style.transform = `translateX(-${Math.max(0, translateForIndex(targetIndex))}px)`;
