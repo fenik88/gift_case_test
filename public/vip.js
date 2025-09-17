@@ -1,5 +1,6 @@
 // filepath: public/vip.js
 document.addEventListener("DOMContentLoaded", () => {
+  // ----- DOM
   const vipCase = document.getElementById("vip-case");
   const slider = document.getElementById("slider");
   const sliderBackdrop = document.getElementById("sliderBackdrop");
@@ -8,12 +9,20 @@ document.addEventListener("DOMContentLoaded", () => {
   const rouletteContainer = document.getElementById("rouletteContainer");
   const footerBar = document.getElementById("footer-bar");
   const spinBtn = document.getElementById("spinBtn");
-  const gallery = document.getElementById("gallery");
   const sliderContent = document.getElementById("sliderContent");
+  const gallery = document.getElementById("gallery");
 
+  // Result overlay
+  const resultOverlay = document.getElementById("resultOverlay");
+  const resultSheet = document.getElementById("resultSheet");
+  const sheetHandle = document.getElementById("sheetHandle");
+  const resultOk = document.getElementById("resultOk");
+  const resultImg = document.getElementById("resultImg");
+  const resultName = document.getElementById("resultName");
+  const resultAmount = document.getElementById("resultAmount");
   const tg = window.Telegram?.WebApp;
-  const IS_TG = !!tg;
 
+  // ----- Const
   const STATIC_PATH = "/static_webp/";
   const LOOP_COUNT = 24;
   const CYCLES_BEFORE_STOP = 6;
@@ -31,42 +40,12 @@ document.addEventListener("DOMContentLoaded", () => {
     { name: "Signet Ring", file: "signet_ring.webp" }
   ];
 
+  // ----- State
   let isSpinning = false;
   let lastCenteredIndex = null;
 
-  /* ---------- Footer dynamic sizing ---------- */
-  function syncFooter() {
-    // измеряем реальную высоту футера (включая safe-area padding)
-    const h = footerBar?.offsetHeight || 0;
-    document.documentElement.style.setProperty("--footer-h", `${h}px`);
-    // буфер для контента модалки поверх футера
-    if (sliderContent) {
-      sliderContent.style.paddingBottom = `calc(16px + ${h}px)`;
-      sliderContent.style.maxHeight = `calc(100vh - ${h}px - 24px)`;
-    }
-  }
-
-  // на всякий случай — если env(safe-area-inset-bottom) меняется
-  const ro = ("ResizeObserver" in window) ? new ResizeObserver(syncFooter) : null;
-  ro?.observe(footerBar);
-
-  window.addEventListener("resize", syncFooter);
-  window.addEventListener("orientationchange", syncFooter);
-  if (IS_TG && tg.onEvent) {
-    tg.onEvent("viewportChanged", syncFooter);
-  }
-
-  /* ---------- Helpers ---------- */
-  function createImg(gift) {
-    const img = document.createElement("img");
-    img.src = STATIC_PATH + gift.file;
-    img.alt = gift.name;
-    img.width = 80; img.height = 80;
-    img.loading = "lazy"; img.decoding = "async";
-    return img;
-  }
+  // ----- Utils
   function preloadImages(list) { list.forEach(g => { const i = new Image(); i.src = STATIC_PATH + g.file; }); }
-
   function getMetrics() {
     const sample = roulette.querySelector(".roulette-item");
     if (!sample) return { itemInnerW: 0, itemFullW: 0, firstLeftMargin: 0, contW: rouletteContainer.clientWidth };
@@ -91,7 +70,30 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  /* ---------- UI fill ---------- */
+  // ----- Footer dynamic sizing
+  function syncFooter() {
+    const h = footerBar?.offsetHeight || 0;
+    document.documentElement.style.setProperty("--footer-h", `${h}px`);
+    if (sliderContent) {
+      sliderContent.style.paddingBottom = `calc(16px + ${h}px)`;
+      sliderContent.style.maxHeight = `calc(100vh - ${h}px - 24px)`;
+    }
+  }
+  const ro = ("ResizeObserver" in window) ? new ResizeObserver(syncFooter) : null;
+  ro?.observe(footerBar);
+  window.addEventListener("resize", syncFooter);
+  window.addEventListener("orientationchange", syncFooter);
+  if (tg?.onEvent) tg.onEvent("viewportChanged", syncFooter);
+
+  // ----- Fill
+  function createImg(gift) {
+    const img = document.createElement("img");
+    img.src = STATIC_PATH + gift.file;
+    img.alt = gift.name;
+    img.width = 80; img.height = 80;
+    img.loading = "lazy"; img.decoding = "async";
+    return img;
+  }
   function fillGallery() {
     gallery.innerHTML = "";
     gifts.forEach(gift => {
@@ -100,7 +102,6 @@ document.addEventListener("DOMContentLoaded", () => {
       gallery.appendChild(div);
     });
   }
-
   function fillRoulette() {
     roulette.innerHTML = "";
     for (let i = 0; i < gifts.length * LOOP_COUNT; i++) {
@@ -116,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
     roulette.style.transition = "";
   }
 
-  /* ---------- Modal ---------- */
+  // ----- Modal open/close
   function openSlider() {
     slider.classList.add("is-open");
     document.body.classList.add("no-scroll");
@@ -129,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
       void roulette.offsetHeight;
       roulette.style.transition = "";
     }
-    syncFooter(); // критично: подогнать футер под TG-вебвью
+    syncFooter();
   }
   function closeSlider() {
     slider.classList.remove("is-open");
@@ -137,16 +138,62 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   vipCase.addEventListener("click", openSlider);
-  vipCase.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openSlider(); }
-  });
+  vipCase.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openSlider(); } });
   closeBtn.addEventListener("click", closeSlider);
   sliderBackdrop.addEventListener("click", closeSlider);
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && slider.classList.contains("is-open")) closeSlider();
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && slider.classList.contains("is-open")) closeSlider(); });
+
+
+  // ----- Result sheet
+  function openResult({ name, imgSrc, amount = 0 }) {
+    resultImg.src = imgSrc;
+    resultImg.alt = name;
+    resultName.textContent = name;
+    resultAmount.textContent = `+${amount}`;
+    resultOverlay.classList.add("is-open");
+    resultSheet.classList.remove("collapsed");
+    resultSheet.classList.add("expanded");
+    resultOverlay.setAttribute("aria-hidden", "false");
+    tg?.HapticFeedback?.notificationOccurred?.("success"); // why: нативный фидбек
+  }
+  function closeResult() {
+    resultSheet.classList.remove("expanded","collapsed");
+    resultOverlay.classList.remove("is-open");
+    resultOverlay.setAttribute("aria-hidden", "true");
+  }
+  function toggleCollapse() {
+    if (!resultOverlay.classList.contains("is-open")) return;
+    if (resultSheet.classList.contains("collapsed")) {
+      resultSheet.classList.remove("collapsed"); resultSheet.classList.add("expanded");
+    } else {
+      resultSheet.classList.remove("expanded"); resultSheet.classList.add("collapsed");
+    }
+  }
+
+  // tap/drag
+  sheetHandle.addEventListener("click", toggleCollapse);
+  resultOk.addEventListener("click", closeResult);
+  resultOverlay.addEventListener("click", (e) => {
+    if (e.target === resultOverlay) closeResult();
   });
 
-  /* ---------- Spin ---------- */
+  // простейший свайп вниз
+  (() => {
+    let startY = null, baseState = "expanded";
+    const onStart = (e) => { startY = (e.touches?e.touches[0].clientY:e.clientY); baseState = resultSheet.classList.contains("collapsed") ? "collapsed" : "expanded"; };
+    const onMove = (e) => {
+      if (startY == null) return;
+      const y = (e.touches?e.touches[0].clientY:e.clientY) - startY;
+      if (y > 12 && baseState === "expanded") { resultSheet.classList.add("collapsed"); resultSheet.classList.remove("expanded"); }
+      if (y < -12 && baseState === "collapsed") { resultSheet.classList.add("expanded"); resultSheet.classList.remove("collapsed"); }
+    };
+    const onEnd = () => { startY = null; };
+    resultSheet.addEventListener("touchstart", onStart, {passive:true});
+    resultSheet.addEventListener("touchmove", onMove, {passive:true});
+    resultSheet.addEventListener("touchend", onEnd);
+  })();
+
+  // ----- Spin
   async function handleSpin() {
     if (isSpinning) return;
     isSpinning = true;
@@ -162,9 +209,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!data.ok) throw new Error(data.error || "Server error");
 
       const { prize, prizeIndex: serverIndex } = data;
-      let prizeIndex = typeof serverIndex === "number"
-        ? serverIndex
-        : gifts.findIndex(g => g.name === prize);
+      let prizeIndex = typeof serverIndex === "number" ? serverIndex : gifts.findIndex(g => g.name === prize);
       if (prizeIndex < 0) throw new Error("Приз не найден на клиенте");
 
       const targetIndex = CYCLES_BEFORE_STOP * gifts.length + prizeIndex;
@@ -175,7 +220,7 @@ document.addEventListener("DOMContentLoaded", () => {
       void roulette.offsetHeight;
 
       const t = translateForIndex(targetIndex);
-      roulette.style.transition = ""; // CSS transition
+      roulette.style.transition = ""; // CSS
       roulette.style.transform = `translateX(-${Math.max(0, t)}px)`;
 
       await waitTransitionEnd(roulette);
@@ -185,20 +230,25 @@ document.addEventListener("DOMContentLoaded", () => {
       void roulette.offsetHeight;
       roulette.style.transition = "";
 
-      alert(`🎉 Поздравляем! Вы выиграли: ${prize}`);
+      // === Показ победного шита ===
+      const giftMeta = gifts[prizeIndex];
+      openResult({
+        name: giftMeta?.name || prize,
+        imgSrc: STATIC_PATH + (giftMeta?.file || ""),
+        amount: 0 // если появится расчет награды — подставим сюда
+      });
     } catch (err) {
       console.error(err);
       alert("Ошибка: " + err.message);
     } finally {
       isSpinning = false;
       spinBtn.disabled = false;
-      syncFooter(); // если TG изменил viewport при алерте
     }
   }
 
   spinBtn.addEventListener("click", handleSpin);
 
-  /* ---------- Recenter & footer updates ---------- */
+  // ----- Recenter & init
   const recenter = () => {
     if (!slider.classList.contains("is-open")) return;
     if (lastCenteredIndex == null) return;
@@ -213,8 +263,7 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("resize", recenter);
   window.addEventListener("orientationchange", recenter);
 
-  /* ---------- init ---------- */
   preloadImages(gifts);
   fillGallery();
-  syncFooter(); // первичный расчёт
+  syncFooter();
 });

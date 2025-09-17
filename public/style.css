@@ -2,21 +2,23 @@
 
 /* ===== Vars ===== */
 :root{
-  --footer-h: 64px;      /* будет переписано JS по реальной высоте футера */
+  --footer-h: 64px;
   --item-size: 112px;
   --h-gap: 10px;
   --v-pad: 14px;
   --border-w: 2px;
+
+  --sheet-maxw: 560px;
+  --sheet-radius: 22px;
+  --sheet-bg: #2b2b2b;
+  --sheet-btn: #2a8cff;
 }
 
 /* ===== Base ===== */
 *{ box-sizing: border-box; }
-html{ -webkit-text-size-adjust: 100%; } /* why: не раздувать шрифты в TG iOS */
+html{ -webkit-text-size-adjust: 100%; }
 html, body{
-  height: 100%;
-  margin: 0;
-  background: #111;
-  color: #fff;
+  height: 100%; margin: 0; background: #111; color: #fff;
   font-family: -apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif;
   overscroll-behavior: none;
 }
@@ -27,87 +29,49 @@ a,button{ touch-action: manipulation; }
 
 .container{
   height: 100%;
-  display: flex; align-items: center; justify-content: center;
-  text-align: center;
+  display: flex; align-items: center; justify-content: center; text-align: center;
 }
 
 /* ===== Card ===== */
 .case{
-  border: 2px solid #fff;
-  padding: 20px 24px;
-  cursor: pointer;
-  border-radius: 14px;
-  background: #1d1d1d;
+  border: 2px solid #fff; padding: 20px 24px; cursor: pointer;
+  border-radius: 14px; background: #1d1d1d;
   transition: transform .18s ease, box-shadow .18s ease;
   box-shadow: 0 6px 24px rgba(0,0,0,.35);
 }
 .case:hover,.case:active{ transform: scale(1.03); }
 
-/* ===== Modal ===== */
-.slider{
-  display: none; position: fixed; inset: 0; z-index: 1000;
-  align-items: center; justify-content: center;
-}
+/* ===== Modal (case) ===== */
+.slider{ display: none; position: fixed; inset: 0; z-index: 1000; align-items: center; justify-content: center; }
 .slider.is-open{ display: flex; }
-.slider-backdrop{
-  position: absolute; inset: 0;
-  background: rgba(0,0,0,.6); backdrop-filter: blur(2px);
-}
+.slider-backdrop{ position: absolute; inset: 0; background: rgba(0,0,0,.6); backdrop-filter: blur(2px); }
 .slider-content{
-  position: relative; z-index: 1; background: #222;
-  padding: 20px;
-  border-radius: 14px;
+  position: relative; z-index: 1; background: #222; padding: 20px; border-radius: 14px;
   width: min(600px, 92vw);
-  /* важное: max-height не учитывает футер — JS прокинет правильную --footer-h */
   max-height: calc(100vh - var(--footer-h) - env(safe-area-inset-bottom) - 24px);
-  overflow-y: auto; -webkit-overflow-scrolling: touch;
-  box-shadow: 0 10px 30px rgba(0,0,0,.5);
+  overflow-y: auto; -webkit-overflow-scrolling: touch; box-shadow: 0 10px 30px rgba(0,0,0,.5);
   padding-bottom: calc(16px + var(--footer-h) + env(safe-area-inset-bottom));
 }
-
-/* крестик справа */
 .close{
-  position: absolute; top: 8px; right: 8px;
-  width: 36px; height: 36px; line-height: 1;
-  display: inline-flex; align-items: center; justify-content: center;
-  border-radius: 10px; border: 0; cursor: pointer;
+  position: absolute; top: 8px; right: 8px; width: 36px; height: 36px; line-height: 1;
+  display: inline-flex; align-items: center; justify-content: center; border-radius: 10px; border: 0; cursor: pointer;
   background: #2c2c2c; color: #fff; font-size: 24px;
 }
 
-/* ===== Roulette (симметрия по вертикали) ===== */
+/* ===== Roulette (symmetric) ===== */
 .roulette-container{
   position: relative; overflow: hidden; width: 100%;
   height: calc(var(--item-size) + 2*var(--v-pad) + 2*var(--border-w));
-  padding-block: var(--v-pad);
-  border: var(--border-w) solid #fff;
-  border-radius: 12px;
-  background: #000;
+  padding-block: var(--v-pad); border: var(--border-w) solid #fff; border-radius: 12px; background: #000;
 }
-.roulette{
-  display: flex; will-change: transform; transform: translateZ(0);
-  transition: transform 4s cubic-bezier(0.25, 1, 0.5, 1);
-}
-.roulette-item{
-  flex: 0 0 auto;
-  width: var(--item-size); height: var(--item-size);
-  margin: 0 var(--h-gap);
-  background: #1f1f1f; border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  user-select: none;
-}
-.roulette-item img{
-  width: calc(var(--item-size) - 24px);
-  height: calc(var(--item-size) - 24px);
-  object-fit: contain;
-  image-rendering: -webkit-optimize-contrast;
-}
-.roulette-marker{
-  position: absolute; top: 0; left: 50%;
-  width: 2px; height: 100%; background: red; transform: translateX(-50%);
-  z-index: 10; pointer-events: none; opacity: .85;
-}
+.roulette{ display: flex; will-change: transform; transform: translateZ(0);
+  transition: transform 4s cubic-bezier(0.25,1,0.5,1); }
+.roulette-item{ flex: 0 0 auto; width: var(--item-size); height: var(--item-size); margin: 0 var(--h-gap);
+  background: #1f1f1f; border-radius: 10px; display:flex; align-items:center; justify-content:center; user-select:none; }
+.roulette-item img{ width: calc(var(--item-size) - 24px); height: calc(var(--item-size) - 24px); object-fit: contain; }
+.roulette-marker{ position:absolute; top:0; left:50%; width:2px; height:100%; background:red; transform:translateX(-50%); z-index:10; }
 
-/* ===== Footer (без фиксированной высоты!) ===== */
+/* ===== Footer (dynamic height) ===== */
 #footer-bar{
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 1001;
   display: flex; align-items: center; justify-content: center;
@@ -116,35 +80,73 @@ a,button{ touch-action: manipulation; }
   backdrop-filter: blur(6px);
 }
 .open-btn{
-  display: inline-flex; align-items: center; justify-content: center; /* why: стабильная вертикаль */
-  min-width: 220px; height: 48px;
-  border: 0; border-radius: 12px;
-  background: #28a745; color: #fff; font-size: 18px; font-weight: 700; letter-spacing: .3px;
-  line-height: 1; /* why: не растягивать из-за line-height */
-  cursor: pointer; transition: transform .08s ease, background .15s ease;
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 220px; height: 48px; line-height: 1;
+  border: 0; border-radius: 12px; background: #28a745; color: #fff;
+  font-size: 18px; font-weight: 700; letter-spacing: .3px; cursor: pointer;
+  transition: transform .08s ease, background .15s ease;
 }
 .open-btn:active{ transform: translateY(1px); }
 .open-btn[disabled]{ opacity: .6; cursor: not-allowed; }
 
 /* ===== Gallery ===== */
-.gallery{
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 10px; margin-top: 10px;
+.gallery{ display:grid; grid-template-columns: repeat(3,1fr); gap:10px; margin-top:10px; }
+.gallery div{ background:#1f1f1f; padding:10px; border-radius:10px; display:flex; align-items:center; justify-content:center; }
+.gallery img{ width:80px; height:80px; object-fit:contain; }
+
+/* ===== Result overlay / sheet ===== */
+.result-overlay{
+  position: fixed; inset: 0; z-index: 2000; display: none;
 }
-.gallery div{
-  background: #1f1f1f; padding: 10px; border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
+.result-overlay.is-open{ display: block; }
+
+.result-sheet{
+  position: absolute; left: 0; right: 0; bottom: 0;
+  margin: 0 auto; width: min(var(--sheet-maxw), 100%);
+  background: var(--sheet-bg);
+  border-radius: var(--sheet-radius) var(--sheet-radius) 0 0;
+  box-shadow: 0 -10px 30px rgba(0,0,0,.5);
+  transform: translateY(100%); /* hidden */
+  transition: transform .28s ease;
+  padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
 }
-.gallery img{ width: 80px; height: 80px; object-fit: contain; }
+.result-sheet.expanded{ transform: translateY(0%); }
+.result-sheet.collapsed{ transform: translateY(55%); } /* свернутое состояние */
+
+.sheet-handle{
+  width: 64px; height: 6px; border-radius: 999px; background: #7a7a7a;
+  margin: 0 auto 12px auto;
+}
+
+.result-title{ text-align: center; margin: 0 0 12px; font-size: 24px; font-weight: 800; }
+
+.prize-box{
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  background-image:
+    radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+    radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 18px 18px, 24px 24px;
+  background-position: 0 0, 12px 12px;
+  border-radius: 16px; padding: 16px;
+}
+.prize-img-wrap{
+  width: 96px; height: 96px; border-radius: 16px; background: #1f1f1f; display:flex; align-items:center; justify-content:center;
+}
+.prize-img-wrap img{ width: 88px; height: 88px; object-fit: contain; }
+.prize-name{ font-size: 16px; opacity: .9; text-align: center; }
+.prize-amount{ font-size: 22px; font-weight: 800; margin-top: 4px; }
+
+.result-ok{
+  margin-top: 14px; width: 100%; height: 52px;
+  border: 0; border-radius: 12px; font-size: 18px; font-weight: 700; line-height: 1;
+  color: #fff; background: var(--sheet-btn); cursor: pointer;
+}
 
 /* ===== Responsive ===== */
 @media (max-width: 600px){
   :root{ --item-size: 128px; --v-pad: 16px; }
   .open-btn{ min-width: 260px; height: 52px; font-size: 18px; }
 }
-
-/* ===== Reduced motion ===== */
 @media (prefers-reduced-motion: reduce){
   .roulette{ transition-duration: 1.2s; }
-  .case{ transition: none; }
 }

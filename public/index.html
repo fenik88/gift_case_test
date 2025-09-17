@@ -16,12 +16,11 @@
     </div>
 </div>
 
-<!-- Модалка -->
+<!-- Модалка кейса -->
 <div class="slider" id="slider" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <div class="slider-backdrop" id="sliderBackdrop"></div>
 
     <div class="slider-content" id="sliderContent">
-        <!-- крестик справа -->
         <button class="close" id="closeBtn" aria-label="Close">×</button>
         <h2 id="modal-title">VIP Case</h2>
 
@@ -34,9 +33,29 @@
         <div class="gallery" id="gallery"></div>
     </div>
 
-    <!-- Футер (динамическая высота) -->
+    <!-- Футер (динамической высоты) -->
     <div id="footer-bar">
         <button class="open-btn" id="spinBtn" aria-live="polite">Открыть</button>
+    </div>
+</div>
+
+<!-- === Победный слайдер (оверлей) === -->
+<div class="result-overlay" id="resultOverlay" aria-hidden="true">
+
+    <div class="result-sheet" id="resultSheet" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+        <div class="sheet-handle" id="sheetHandle" aria-label="Перетянуть"></div>
+
+        <h3 class="result-title" id="resultTitle">Поздравляем!</h3>
+
+        <div class="prize-box">
+            <div class="prize-img-wrap">
+                <img id="resultImg" alt="Приз" />
+            </div>
+            <div class="prize-name" id="resultName"></div>
+            <div class="prize-amount"><span id="resultAmount">+0</span>&nbsp;<span aria-hidden="true">💎</span></div>
+        </div>
+
+        <button class="result-ok" id="resultOk">Ок</button>
     </div>
 </div>
 
