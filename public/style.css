@@ -8,7 +8,7 @@ html, body {
   background: #111;
   color: #fff;
   font-family: -apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif;
-  overscroll-behavior: none; /* why: убрать резинку */
+  overscroll-behavior: none;
 }
 :root { --footer-h: 64px; }
 body.no-scroll { overflow: hidden; touch-action: none; }
@@ -53,11 +53,11 @@ a, button { touch-action: manipulation; }
   max-height: calc(100vh - var(--footer-h) - env(safe-area-inset-bottom) - 24px);
   overflow-y: auto; -webkit-overflow-scrolling: touch;
   box-shadow: 0 10px 30px rgba(0,0,0,.5);
-  /* why: не прятать последний ряд за фикс-футером */
+  /* why: чтобы контент не прятался за фикс-футером */
   padding-bottom: calc(16px + var(--footer-h) + env(safe-area-inset-bottom));
 }
 
-/* крестик справа */
+/* крестик вправо */
 .close {
   position: absolute; top: 35px; right: 20px;
   width: 36px; height: 36px;
@@ -92,7 +92,7 @@ a, button { touch-action: manipulation; }
   z-index: 10; pointer-events: none; opacity: .85;
 }
 
-/* ===== Футер ===== */
+/* ===== Футер (fallback вне Telegram) ===== */
 #footer-bar {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 1001;
   height: var(--footer-h);
