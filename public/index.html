@@ -1,64 +1,63 @@
 <!-- filepath: public/index.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="format-detection" content="telephone=no" />
     <title>VIP Case</title>
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 <div class="container">
-    <div class="case" id="vip-case" role="button" tabindex="0" aria-label="Open VIP case">
+    <!-- Карточка кейса -->
+    <div class="case" id="vip-case" role="button" tabindex="0" aria-label="Открыть VIP кейс">
         <h2>🎁 VIP Case</h2>
         <p>Tap to open</p>
     </div>
 </div>
 
-<!-- Модалка кейса -->
-<div class="slider" id="slider" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+<!-- Слайдер (оверлей) -->
+<div class="slider" id="slider">
     <div class="slider-backdrop" id="sliderBackdrop"></div>
 
     <div class="slider-content" id="sliderContent">
-        <button class="close" id="closeBtn" aria-label="Close">×</button>
-        <h2 id="modal-title">VIP Case</h2>
+        <button class="close" id="closeBtn" aria-label="Закрыть">✕</button>
 
-        <div class="roulette-container" id="rouletteContainer">
-            <div class="roulette" id="roulette"></div>
-            <div class="roulette-marker" aria-hidden="true"></div>
+        <div class="header-row">
+            <h2 class="title">VIP Case</h2>
         </div>
 
-        <h3>What's inside?</h3>
-        <div class="gallery" id="gallery"></div>
-    </div>
+        <!-- Рулетка -->
+        <div class="roulette-container" id="rouletteContainer">
+            <div class="roulette" id="roulette"></div>
+            <div class="roulette-marker"></div>
+        </div>
 
-    <!-- Футер (динамической высоты) -->
-    <div id="footer-bar">
-        <button class="open-btn" id="spinBtn" aria-live="polite">Открыть</button>
+        <!-- Кнопка открыть -->
+        <div id="footer-bar">
+            <button class="open-btn" id="spinBtn">Открыть</button>
+        </div>
+
+        <h3 class="section-title">Что внутри?</h3>
+        <div class="gallery" id="gallery"></div>
     </div>
 </div>
 
-<!-- === Победный слайдер (оверлей) === -->
+<!-- Результат (sheet) -->
 <div class="result-overlay" id="resultOverlay" aria-hidden="true">
-
-    <div class="result-sheet" id="resultSheet" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
-        <div class="sheet-handle" id="sheetHandle" aria-label="Перетянуть"></div>
-
-        <h3 class="result-title" id="resultTitle">Поздравляем!</h3>
-
-        <div class="prize-box">
-            <div class="prize-img-wrap">
-                <img id="resultImg" alt="Приз" />
-            </div>
-            <div class="prize-name" id="resultName"></div>
-            <div class="prize-amount"><span id="resultAmount">+0</span>&nbsp;<span aria-hidden="true">💎</span></div>
+    <div class="result-sheet" id="resultSheet">
+        <div class="sheet-handle" id="sheetHandle"></div>
+        <h3 class="result-title">Поздравляем!</h3>
+        <div class="result-card">
+            <img id="resultImg" alt="" />
         </div>
-
+        <div class="result-amount"><span id="resultAmount">+0</span> <span class="dim">💎</span></div>
+        <div class="result-name" id="resultName">—</div>
         <button class="result-ok" id="resultOk">Ок</button>
     </div>
 </div>
 
+<!-- Telegram SDK -->
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="vip.js"></script>
 </body>
