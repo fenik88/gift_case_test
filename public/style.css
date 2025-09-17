@@ -1,6 +1,6 @@
 /* filepath: public/style.css */
 
-/* ===== Базовые мобильные улучшения ===== */
+/* ===== База для мобилки ===== */
 * { box-sizing: border-box; }
 html, body {
   height: 100%;
@@ -10,193 +10,115 @@ html, body {
   font-family: -apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif;
   overscroll-behavior: none; /* why: убрать резинку */
 }
-:root {
-  --footer-h: 64px;
-}
-
-body.no-scroll { /* why: блокируем фон при модалке */
-  overflow: hidden;
-  touch-action: none;
-}
-
+:root { --footer-h: 64px; }
+body.no-scroll { overflow: hidden; touch-action: none; }
 a, button { touch-action: manipulation; }
 *:focus-visible { outline: 2px solid #4da3ff; outline-offset: 2px; }
 * { -webkit-tap-highlight-color: transparent; }
 
-/* ===== Центрирование стартового экрана ===== */
 .container {
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   text-align: center;
 }
 
-/* ===== Карточка VIP кейса ===== */
+/* ===== Карточка ===== */
 .case {
   border: 2px solid #fff;
   padding: 20px 24px;
   cursor: pointer;
   border-radius: 14px;
   background: #1d1d1d;
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
-  box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+  transition: transform .18s ease, box-shadow .18s ease;
+  box-shadow: 0 6px 24px rgba(0,0,0,.35);
 }
-.case:hover, .case:active {
-  transform: scale(1.03);
-}
+.case:hover, .case:active { transform: scale(1.03); }
 
-/* ===== Слайдер / модалка ===== */
+/* ===== Модалка ===== */
 .slider {
-  display: none; /* toggled to flex */
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  align-items: center;
-  justify-content: center;
+  display: none; position: fixed; inset: 0; z-index: 1000;
+  align-items: center; justify-content: center;
 }
 .slider.is-open { display: flex; }
 
 .slider-backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(2px);
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,.6); backdrop-filter: blur(2px);
 }
-
 .slider-content {
-  position: relative;
-  z-index: 1;
-  background: #222;
+  position: relative; z-index: 1; background: #222;
   padding: 20px;
   border-radius: 14px;
   width: min(600px, 92vw);
-  max-height: calc(100vh - var(--footer-h) - 32px - env(safe-area-inset-bottom)); /* why: не перекрывать кнопкой */
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  max-height: calc(100vh - var(--footer-h) - env(safe-area-inset-bottom) - 24px);
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
+  box-shadow: 0 10px 30px rgba(0,0,0,.5);
+  /* why: не прятать последний ряд за фикс-футером */
+  padding-bottom: calc(16px + var(--footer-h) + env(safe-area-inset-bottom));
 }
 
-/* Кнопка закрытия */
+/* крестик справа */
 .close {
-  position: sticky; /* stays visible when scrolls */
-  top: 0;
-  margin-left: auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  position: absolute; top: 35px; right: 20px;
   width: 36px; height: 36px;
-  border-radius: 10px;
-  border: 0;
-  background: #2c2c2c;
-  color: #fff;
-  font-size: 24px;
-  cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 10px; border: 0; cursor: pointer;
+  background: #2c2c2c; color: #fff; font-size: 24px; line-height: 1;
 }
 
 /* ===== Рулетка ===== */
 .roulette-container {
-  position: relative;
-  overflow: hidden;
-  width: 100%;
-  height: 140px;
-  margin: 16px 0 8px;
-  border: 2px solid #fff;
-  border-radius: 12px;
-  background: #000;
+  position: relative; overflow: hidden; width: 100%;
+  height: 140px; margin: 16px 0 8px;
+  border: 2px solid #fff; border-radius: 12px; background: #000;
 }
-
 .roulette {
-  display: flex;
-  will-change: transform; /* why: GPU компоновка */
-  transform: translateZ(0);
+  display: flex; will-change: transform; transform: translateZ(0);
   transition: transform 4s cubic-bezier(0.25, 1, 0.5, 1);
 }
-
 .roulette-item {
-  min-width: 112px;
-  height: 112px;
-  background: #1f1f1f;
-  margin: 14px 10px;
-  border-radius: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  flex: 0 0 auto;
+  min-width: 112px; height: 112px;
+  background: #1f1f1f; margin: 14px 10px;
+  border-radius: 10px; display: flex; align-items: center; justify-content: center;
   user-select: none;
 }
-
 .roulette-item img {
-  width: 88px;
-  height: 88px;
-  object-fit: contain;
-  image-rendering: -webkit-optimize-contrast;
+  width: 88px; height: 88px; object-fit: contain; image-rendering: -webkit-optimize-contrast;
 }
-
-/* Маркер по центру */
 .roulette-marker {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 2px;
-  height: 100%;
-  background: red;
-  transform: translateX(-50%);
-  z-index: 10;
-  pointer-events: none;
-  opacity: 0.8;
+  position: absolute; top: 0; left: 50%;
+  width: 2px; height: 100%; background: red; transform: translateX(-50%);
+  z-index: 10; pointer-events: none; opacity: .85;
 }
 
-/* ===== Футер-кнопка ===== */
+/* ===== Футер ===== */
 #footer-bar {
-  position: fixed;
-  left: 0; right: 0; bottom: 0;
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 1001;
   height: var(--footer-h);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #111111f2;
-  border-top: 1px solid #333;
-  z-index: 1001;
+  display: flex; align-items: center; justify-content: center;
+  background: #111111f2; border-top: 1px solid #333;
   padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
   backdrop-filter: blur(6px);
 }
-
 .open-btn {
-  min-width: 220px;
-  height: 48px;
-  border: 0;
-  border-radius: 12px;
-  background: #28a745;
-  color: #fff;
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: .3px;
-  cursor: pointer;
-  transition: transform .08s ease, background .15s ease;
+  min-width: 220px; height: 48px; border: 0; border-radius: 12px;
+  background: #28a745; color: #fff; font-size: 18px; font-weight: 700; letter-spacing: .3px;
+  cursor: pointer; transition: transform .08s ease, background .15s ease;
 }
 .open-btn:active { transform: translateY(1px); }
 .open-btn[disabled] { opacity: .6; cursor: not-allowed; }
 
 /* ===== Галерея ===== */
 .gallery {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin-top: 10px;
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 10px; margin-top: 10px;
 }
 .gallery div {
-  background: #1f1f1f;
-  padding: 10px;
-  border-radius: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background: #1f1f1f; padding: 10px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
 }
-.gallery img {
-  width: 80px;
-  height: 80px;
-  object-fit: contain;
-}
+.gallery img { width: 80px; height: 80px; object-fit: contain; }
 
 /* ===== Responsive ===== */
 @media (max-width: 600px) {

@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const vipCase = document.getElementById("vip-case");
   const slider = document.getElementById("slider");
   const sliderBackdrop = document.getElementById("sliderBackdrop");
-  const sliderContent = document.getElementById("sliderContent");
   const closeBtn = document.getElementById("closeBtn");
   const roulette = document.getElementById("roulette");
   const rouletteContainer = document.getElementById("rouletteContainer");
@@ -11,8 +10,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const gallery = document.getElementById("gallery");
 
   const STATIC_PATH = "/static_webp/";
-  const LOOP_COUNT = 24;          // why: длиннее лента для плавности
-  const CYCLES_BEFORE_STOP = 6;   // why: фиксированные обороты до призового индекса
+  const LOOP_COUNT = 24;
+  const CYCLES_BEFORE_STOP = 6;
 
   const gifts = [
     { name: "Plush Pepe", file: "plush_pepe.webp" },
@@ -28,10 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
 
   let isSpinning = false;
-  let lastCenteredIndex = null; // 0..gifts.length-1
-
-  /** Utils */
-  const $ = (sel, root = document) => root.querySelector(sel);
+  let lastCenteredIndex = null;
 
   function createImg(gift) {
     const img = document.createElement("img");
@@ -45,44 +41,36 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function preloadImages(list) {
-    list.forEach(g => {
-      const img = new Image();
-      img.src = STATIC_PATH + g.file;
-    });
+    list.forEach(g => { const i = new Image(); i.src = STATIC_PATH + g.file; });
   }
 
-  function itemMetrics() {
-    const sample = $(".roulette-item", roulette);
-    if (!sample) return { itemW: 0, innerW: 0, contW: rouletteContainer.clientWidth };
-    const cs = getComputedStyle(sample);
+  function getMetrics() {
+    const sample = roulette.querySelector(".roulette-item");
+    if (!sample) return { itemInnerW: 0, itemFullW: 0, firstLeftMargin: 0, contW: rouletteContainer.clientWidth };
     const rect = sample.getBoundingClientRect();
-    const marginH = parseFloat(cs.marginLeft) + parseFloat(cs.marginRight);
-    const itemW = rect.width + marginH;
+    const cs = getComputedStyle(sample);
+    const ml = parseFloat(cs.marginLeft) || 0;
+    const mr = parseFloat(cs.marginRight) || 0;
+    const itemInnerW = rect.width;               // без внешних маргинов
+    const itemFullW  = rect.width + ml + mr;     // шаг по ленте
     const contW = rouletteContainer.clientWidth;
-    const innerW = roulette.scrollWidth;
-    return { itemW, contW, innerW };
+    return { itemInnerW, itemFullW, firstLeftMargin: ml, contW };
   }
 
-  function centerTranslateForIndex(index) {
-    const { itemW, contW } = itemMetrics();
-    const sample = $(".roulette-item", roulette);
-    const sampleRect = sample ? sample.getBoundingClientRect() : { width: 0 };
-    const itemInnerW = sampleRect.width; // без margin
-    const centerOffset = (contW / 2) - (itemInnerW / 2);
-    return index * itemW - centerOffset;
+  // точный пиксельный translate для центра индекса
+  function translateForIndex(index) {
+    const { itemInnerW, itemFullW, firstLeftMargin, contW } = getMetrics();
+    const itemCenterFromStart = firstLeftMargin + index * itemFullW + itemInnerW / 2;
+    return itemCenterFromStart - contW / 2;
   }
 
   function waitTransitionEnd(el) {
     return new Promise((resolve) => {
-      const done = () => {
-        el.removeEventListener("transitionend", done, true);
-        resolve();
-      };
+      const done = () => { el.removeEventListener("transitionend", done, true); resolve(); };
       el.addEventListener("transitionend", done, true);
     });
   }
 
-  /** Галерея */
   function fillGallery() {
     gallery.innerHTML = "";
     gifts.forEach(gift => {
@@ -92,7 +80,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  /** Рулетка */
   function fillRoulette() {
     roulette.innerHTML = "";
     for (let i = 0; i < gifts.length * LOOP_COUNT; i++) {
@@ -102,48 +89,42 @@ document.addEventListener("DOMContentLoaded", () => {
       item.appendChild(createImg(gift));
       roulette.appendChild(item);
     }
-    // сброс позиции
     roulette.style.transition = "none";
     roulette.style.transform = "translateX(0px)";
-    // force reflow
     void roulette.offsetHeight;
-    roulette.style.transition = ""; // вернём по CSS
+    roulette.style.transition = ""; // вернуть CSS
   }
 
-  /** Открыть модалку */
   function openSlider() {
     slider.classList.add("is-open");
     document.body.classList.add("no-scroll");
     if (!roulette.hasChildNodes()) fillRoulette();
-    // пересчёт и мягкое центрирование на последнем индексе при ре-открытии
     if (lastCenteredIndex != null) {
       roulette.style.transition = "none";
       const baseIndex = CYCLES_BEFORE_STOP * gifts.length + lastCenteredIndex;
-      const target = centerTranslateForIndex(baseIndex);
-      roulette.style.transform = `translateX(-${target}px)`;
+      const t = translateForIndex(baseIndex);
+      roulette.style.transform = `translateX(-${Math.max(0, t)}px)`;
       void roulette.offsetHeight;
-      roulette.style.transition = ""; // вернуть по CSS
+      roulette.style.transition = "";
     }
   }
 
-  /** Закрыть модалку */
   function closeSlider() {
     slider.classList.remove("is-open");
     document.body.classList.remove("no-scroll");
   }
 
-  /** События открытия/закрытия */
   vipCase.addEventListener("click", openSlider);
   vipCase.addEventListener("keydown", (e) => {
     if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openSlider(); }
   });
   closeBtn.addEventListener("click", closeSlider);
-  sliderBackdrop.addEventListener("click", closeSlider);
+  document.getElementById("sliderBackdrop").addEventListener("click", closeSlider);
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && slider.classList.contains("is-open")) closeSlider();
   });
 
-  /** Спин */
+  // Спин с точным прицеливанием по индексу
   spinBtn.addEventListener("click", async () => {
     if (isSpinning) return;
     isSpinning = true;
@@ -158,32 +139,27 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await res.json();
       if (!data.ok) throw new Error(data.error || "Server error");
 
-      const { prize, prizeIndex: srvIndex } = data;
-      let prizeIndex = typeof srvIndex === "number" ? srvIndex : gifts.findIndex(g => g.name === prize);
+      const { prize, prizeIndex: serverIndex } = data;
+      let prizeIndex = typeof serverIndex === "number"
+        ? serverIndex
+        : gifts.findIndex(g => g.name === prize);
       if (prizeIndex < 0) throw new Error("Приз не найден на клиенте");
 
-      // подготовка
-      const baseCycles = CYCLES_BEFORE_STOP;
-      const targetIndex = baseCycles * gifts.length + prizeIndex;
+      const targetIndex = CYCLES_BEFORE_STOP * gifts.length + prizeIndex;
       lastCenteredIndex = prizeIndex;
 
-      // сброс
       roulette.style.transition = "none";
       roulette.style.transform = "translateX(0px)";
-      void roulette.offsetHeight; // reflow
+      void roulette.offsetHeight;
 
-      // целимся по пикселям на центр маркера
-      const targetTranslate = centerTranslateForIndex(targetIndex);
-
-      // анимируем
-      roulette.style.transition = ""; // вернуть CSS
-      roulette.style.transform = `translateX(-${Math.max(0, targetTranslate)}px)`;
+      const t = translateForIndex(targetIndex);
+      roulette.style.transition = ""; // CSS
+      roulette.style.transform = `translateX(-${Math.max(0, t)}px)`;
 
       await waitTransitionEnd(roulette);
 
-      // выравниваем позицию без дерганья
       roulette.style.transition = "none";
-      roulette.style.transform = `translateX(-${Math.max(0, centerTranslateForIndex(targetIndex))}px)`;
+      roulette.style.transform = `translateX(-${Math.max(0, translateForIndex(targetIndex))}px)`;
       void roulette.offsetHeight;
       roulette.style.transition = "";
 
@@ -197,22 +173,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  /** На изменение размеров/ориентации — перецентрировать последнюю позицию */
+  // Перецентрировать при ресайзе/смене ориентации
   const recenter = () => {
     if (!slider.classList.contains("is-open")) return;
     if (lastCenteredIndex == null) return;
     roulette.style.transition = "none";
     const baseIndex = CYCLES_BEFORE_STOP * gifts.length + lastCenteredIndex;
-    const t = centerTranslateForIndex(baseIndex);
+    const t = translateForIndex(baseIndex);
     roulette.style.transform = `translateX(-${Math.max(0, t)}px)`;
     void roulette.offsetHeight;
     roulette.style.transition = "";
   };
-
   window.addEventListener("resize", recenter);
   window.addEventListener("orientationchange", recenter);
 
-  /** Инициализация */
+  // init
   preloadImages(gifts);
   fillGallery();
 });

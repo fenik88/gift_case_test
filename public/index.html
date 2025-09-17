@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <!-- why: safe areas on iOS with fixed footer -->
+    <!-- why: корректные safe-areas на iOS -->
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="format-detection" content="telephone=no" />
     <title>VIP Case</title>
@@ -11,21 +11,21 @@
 </head>
 <body>
 <div class="container">
-    <!-- VIP кейс -->
     <div class="case" id="vip-case" role="button" tabindex="0" aria-label="Open VIP case">
         <h2>🎁 VIP Case</h2>
         <p>Tap to open</p>
     </div>
 </div>
 
-<!-- Слайдер / Модалка -->
+<!-- Модалка -->
 <div class="slider" id="slider" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <div class="slider-backdrop" id="sliderBackdrop"></div>
+
     <div class="slider-content" id="sliderContent">
-        <button class="close" id="closeBtn" aria-label="Close">&times;</button>
+        <!-- крестик СПРАВА -->
+        <button class="close" id="closeBtn" aria-label="Close">×</button>
         <h2 id="modal-title">VIP Case</h2>
 
-        <!-- Рулетка -->
         <div class="roulette-container" id="rouletteContainer">
             <div class="roulette" id="roulette"></div>
             <div class="roulette-marker" aria-hidden="true"></div>
@@ -35,7 +35,6 @@
         <div class="gallery" id="gallery"></div>
     </div>
 
-    <!-- Кнопка открыть (фикс. низ) -->
     <div id="footer-bar">
         <button class="open-btn" id="spinBtn" aria-live="polite">Открыть</button>
     </div>
