@@ -1,4 +1,4 @@
-<!-- filepath: public/index.html -->
+<!-- filepath: public/index.html (без изменений) -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -9,31 +9,26 @@
 </head>
 <body>
 <div class="container">
-    <!-- Карточка кейса -->
     <div class="case" id="vip-case" role="button" tabindex="0" aria-label="Открыть VIP кейс">
         <h2>🎁 VIP Case</h2>
         <p>Tap to open</p>
     </div>
 </div>
 
-<!-- Слайдер (оверлей) -->
 <div class="slider" id="slider">
     <div class="slider-backdrop" id="sliderBackdrop"></div>
 
     <div class="slider-content" id="sliderContent">
-        <button class="close" id="closeBtn" aria-label="Закрыть">✕</button>
-
         <div class="header-row">
             <h2 class="title">VIP Case</h2>
+            <button class="close" id="closeBtn" aria-label="Закрыть">✕</button>
         </div>
 
-        <!-- Рулетка -->
         <div class="roulette-container" id="rouletteContainer">
             <div class="roulette" id="roulette"></div>
             <div class="roulette-marker"></div>
         </div>
 
-        <!-- Кнопка открыть -->
         <div id="footer-bar">
             <button class="open-btn" id="spinBtn">Открыть</button>
         </div>
@@ -43,21 +38,17 @@
     </div>
 </div>
 
-<!-- Результат (sheet) -->
 <div class="result-overlay" id="resultOverlay" aria-hidden="true">
     <div class="result-sheet" id="resultSheet">
         <div class="sheet-handle" id="sheetHandle"></div>
         <h3 class="result-title">Поздравляем!</h3>
-        <div class="result-card">
-            <img id="resultImg" alt="" />
-        </div>
+        <div class="result-card"><img id="resultImg" alt="" /></div>
         <div class="result-amount"><span id="resultAmount">+0</span> <span class="dim">💎</span></div>
         <div class="result-name" id="resultName">—</div>
         <button class="result-ok" id="resultOk">Ок</button>
     </div>
 </div>
 
-<!-- Telegram SDK -->
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="vip.js"></script>
 </body>
