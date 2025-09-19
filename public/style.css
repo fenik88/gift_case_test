@@ -64,13 +64,16 @@ body{
   margin:0 0 12px;             /* было 8px сверху — убрал, чтобы примкнуть к заголовку */
   border:1px solid var(--border); border-radius:18px; background:var(--bg-elev-2);
   contain: content;
+  display: flex;              /* + */
+  align-items: center;        /* + */
 }
 .roulette{
   display:flex; padding:0 8px;
+  align-items:center;            /* <<< ключ: центруем айтемы по высоте контейнера */
   transition:transform 4s cubic-bezier(.25,1,.5,1); will-change:transform;
 }
 .roulette-item{
-  min-width:132px; height:128px; margin:10px 8px; border-radius:16px;
+  min-width:132px; height:128px; margin:0px 8px; border-radius:16px;
   background:var(--panel); border:1px solid var(--border);
   display:flex; align-items:center; justify-content:center
 }

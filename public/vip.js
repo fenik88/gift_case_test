@@ -1,5 +1,5 @@
 // filepath: public/vip.js
-// функционально как у тебя; добавил только один защитный вызов syncFooter() при открытии
+// функционально как у тебя; изменены только metrics()/xFor()/idxUnder()
 document.addEventListener("DOMContentLoaded", () => {
   const vipCase = document.getElementById("vip-case");
   const slider = document.getElementById("slider");
@@ -49,11 +49,41 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("resize", syncFooter); window.addEventListener("orientationchange", syncFooter); tg?.onEvent?.("viewportChanged", syncFooter);
 
   function preload(){ gifts.forEach(g=>{ const i=new Image(); i.src=STATIC_PATH+g.file; }); }
-  function metrics(){ const s=roulette.querySelector(".roulette-item"); if(!s) return {w:0,full:0,ml:0,cw:rouletteContainer.clientWidth}; const r=s.getBoundingClientRect(), cs=getComputedStyle(s); const ml=parseFloat(cs.marginLeft)||0, mr=parseFloat(cs.marginRight)||0; return { w:r.width, full:r.width+ml+mr, ml, cw:rouletteContainer.clientWidth }; }
-  function xFor(i){ const {w,full,ml,cw}=metrics(); return (ml + i*full + w/2) - cw/2; }
+
+  // === ФИКС ЦЕНТРОВКИ: учитываем padding-left у .roulette ===
+  function metrics(){
+    const s = roulette.querySelector(".roulette-item");
+    const cw = rouletteContainer.clientWidth;
+    if(!s) return { w:0, full:0, ml:0, cw, padL:0 };
+    const r = s.getBoundingClientRect();
+    const cs = getComputedStyle(s);
+    const ml = parseFloat(cs.marginLeft)||0;
+    const mr = parseFloat(cs.marginRight)||0;
+    const w  = r.width;
+    const full = w + ml + mr;
+
+    const padL = parseFloat(getComputedStyle(roulette).paddingLeft)||0; // <— ВАЖНО
+
+    return { w, full, ml, cw, padL };
+  }
+
+  function xFor(i){
+    const { w, full, ml, cw, padL } = metrics();
+    // центр тайла = padL + ml + i*full + w/2
+    return (padL + ml + i*full + w/2) - cw/2;
+  }
+
   function onEnd(el){ return new Promise(res=>{ const fn=()=>{ el.removeEventListener("transitionend",fn,true); res();}; el.addEventListener("transitionend",fn,true); }); }
   function curX(el){ const tr=getComputedStyle(el).transform; if(!tr||tr==="none") return 0; const m=tr.startsWith("matrix3d(")?tr.slice(9,-1).split(","):tr.slice(7,-1).split(","); return parseFloat(m[m.length===16?12:4])||0; }
-  function idxUnder(){ const {w,full,ml,cw}=metrics(); const x=Math.abs(curX(roulette)); const center=x+cw/2; const i=(center-ml-w/2)/full; return Math.max(0,Math.round(i)); }
+
+  function idxUnder(){
+    const { w, full, ml, cw, padL } = metrics();
+    const x = Math.abs(curX(roulette));
+    const center = x + cw/2;
+    const i = (center - padL - ml - w/2) / full;   // <— вычитаем padL
+    return Math.max(0, Math.round(i));
+  }
+  // =========================================================
 
   function idleStart(){ if(idleRAF||isSpinning||!slider.classList.contains("is-open")) return; idleLast=performance.now(); const loopW=metrics().full*gifts.length; const step=(ts)=>{ const dt=Math.min(100,ts-idleLast)/1000; idleLast=ts; idleOffset+=IDLE_SPEED*dt; roulette.style.transition="none"; roulette.style.transform=`translateX(-${(idleOffset%loopW)}px)`; idleRAF=requestAnimationFrame(step); }; idleRAF=requestAnimationFrame(step); }
   function idleStop(){ if(idleRAF){ cancelAnimationFrame(idleRAF); idleRAF=null; } }
