@@ -20,8 +20,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const resultAmount = document.getElementById("resultAmount");
 
   // ----- Telegram
-  const tg = window.Telegram?.WebApp;
-  tg?.ready?.();
+    const tg = window.Telegram?.WebApp;
+    tg?.ready?.();              // Сообщаем Telegram, что WebApp готов
+    tg?.expand?.();
 
   // ----- HAPTICS
   const PLATFORM = tg?.platform || "web";
