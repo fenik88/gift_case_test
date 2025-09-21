@@ -1,4 +1,4 @@
-<!-- filepath: public/index.html (без изменений) -->
+<!-- filepath: public/index.html -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -8,16 +8,35 @@
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<div class="container">
+<!-- TAB: Кейсы -->
+<div class="container tab is-active" id="tab-cases">
     <div class="case" id="vip-case" role="button" tabindex="0" aria-label="Открыть VIP кейс">
         <h2>🎁 VIP Case</h2>
         <p>Tap to open</p>
     </div>
 </div>
 
+<!-- TAB: Апгрейд -->
+<div class="container tab" id="tab-upgrade" aria-hidden="true">
+    <div class="placeholder">
+        <div class="ph-emoji">⬆️</div>
+        <div class="ph-title">Апгрейд</div>
+        <div class="ph-sub">Скоро тут появится апгрейд вещей</div>
+    </div>
+</div>
+
+<!-- TAB: Профиль -->
+<div class="container tab" id="tab-profile" aria-hidden="true">
+    <div class="placeholder">
+        <div class="ph-emoji">👤</div>
+        <div class="ph-title">Профиль</div>
+        <div class="ph-sub">Здесь будет ваш инвентарь и статистика</div>
+    </div>
+</div>
+
+<!-- Слайдер (оверлей) -->
 <div class="slider" id="slider">
     <div class="slider-backdrop" id="sliderBackdrop"></div>
-
     <div class="slider-content" id="sliderContent">
         <div class="header-row">
             <h2 class="title">VIP Case</h2>
@@ -38,6 +57,7 @@
     </div>
 </div>
 
+<!-- Результат -->
 <div class="result-overlay" id="resultOverlay" aria-hidden="true">
     <div class="result-sheet" id="resultSheet">
         <div class="sheet-handle" id="sheetHandle"></div>
@@ -49,6 +69,29 @@
     </div>
 </div>
 
+<!-- Нижний таб-бар -->
+<nav class="tabbar" id="app-tabbar" role="tablist" aria-label="Основная навигация">
+    <button id="btn-tab-cases" class="tabbtn is-active" role="tab" aria-selected="true" aria-controls="tab-cases">
+      <span class="ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><use href="icons.svg#case" xlink:href="icons.svg#case"/></svg>
+      </span>
+        <span class="lbl">Кейсы</span>
+    </button>
+    <button id="btn-tab-upgrade" class="tabbtn" role="tab" aria-selected="false" aria-controls="tab-upgrade">
+      <span class="ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><use href="icons.svg#upgrade" xlink:href="icons.svg#upgrade"/></svg>
+      </span>
+        <span class="lbl">Апгрейд</span>
+    </button>
+    <button id="btn-tab-profile" class="tabbtn" role="tab" aria-selected="false" aria-controls="tab-profile">
+      <span class="ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><use href="icons.svg#user" xlink:href="icons.svg#user"/></svg>
+      </span>
+        <span class="lbl">Профиль</span>
+    </button>
+</nav>
+
+<!-- Telegram SDK -->
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="vip.js"></script>
 </body>

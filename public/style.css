@@ -6,21 +6,30 @@
   --text:#e7ebf0; --text-dim:#aab2bf;
   --accent:#3390ec; --accent-press:#2b7bdc;
   --border:#2d3445; --marker:#3390ec; --radius:16px;
-  --footer-h: 96px;
+  --footer-h:96px; --tabbar-h:64px;
 }
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
   margin:0; background:var(--bg); color:var(--text);
   font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-  min-height:100vh; display:block;
-  -webkit-tap-highlight-color:transparent;
+  min-height:100vh; display:block; -webkit-tap-highlight-color:transparent;
 }
 .no-scroll{overflow:hidden}
+
+/* ---------- Tabs containers ---------- */
 .container{
   min-height:100svh; display:grid; place-items:center;
-  padding:0 16px; text-align:center;
+  padding:0 16px; padding-bottom:calc(16px + var(--tabbar-h)); text-align:center;
 }
+.container.tab{ display:none; }
+.container.tab.is-active{ display:grid; }
+
+/* placeholders */
+.placeholder{ display:flex; flex-direction:column; align-items:center; gap:8px; opacity:.9 }
+.ph-emoji{ font-size:42px }
+.ph-title{ font-size:22px; font-weight:700 }
+.ph-sub{ font-size:14px; color:var(--text-dim) }
 
 /* ---------- Case ---------- */
 .case{
@@ -35,8 +44,7 @@ body{
 .slider.is-open{ display:block }
 .slider-backdrop{ position:absolute; inset:0; background:rgba(0,0,0,.6); backdrop-filter:blur(2px) }
 .slider-content{
-  position:absolute; inset:0;
-  background:var(--bg-elev);
+  position:absolute; inset:0; background:var(--bg-elev);
   border-top:1px solid var(--border);
   border-top-left-radius:24px; border-top-right-radius:24px;
   overflow:auto; -webkit-overflow-scrolling:touch;
@@ -44,13 +52,8 @@ body{
 }
 
 /* --- Ряд над рулеткой --- */
-.header-row{
-  display:flex; align-items:center; justify-content:space-between; gap:12px;
-  margin: 8px 2px 20px;   /* маленькая щель перед рулеткой */
-}
-.title{ margin:0 }       /* важно: убираем нижний отступ у заголовка */
-
-/* Крестик внутри ряда */
+.header-row{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin:8px 2px 20px; }
+.title{ margin:0 }
 .close{
   position:static; display:inline-flex; align-items:center; justify-content:center;
   width:36px; height:36px; border-radius:10px; cursor:pointer; line-height:1;
@@ -60,20 +63,16 @@ body{
 
 /* ---------- Roulette ---------- */
 .roulette-container{
-  position:relative; overflow:hidden; width:100%; height:160px;
-  margin:0 0 12px;             /* было 8px сверху — убрал, чтобы примкнуть к заголовку */
+  position:relative; overflow:hidden; width:100%; height:160px; margin:0 0 12px;
   border:1px solid var(--border); border-radius:18px; background:var(--bg-elev-2);
-  contain: content;
-  display: flex;              /* + */
-  align-items: center;        /* + */
+  contain:content; display:flex; align-items:center;
 }
 .roulette{
-  display:flex; padding:0 8px;
-  align-items:center;            /* <<< ключ: центруем айтемы по высоте контейнера */
+  display:flex; padding:0 8px; align-items:center;
   transition:transform 4s cubic-bezier(.25,1,.5,1); will-change:transform;
 }
 .roulette-item{
-  min-width:132px; height:128px; margin:0px 8px; border-radius:16px;
+  min-width:132px; height:128px; margin:0 8px; border-radius:16px;
   background:var(--panel); border:1px solid var(--border);
   display:flex; align-items:center; justify-content:center
 }
@@ -85,19 +84,17 @@ body{
 .gallery{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px }
 .gallery div{
   background:var(--panel); border:1px solid var(--border);
-  border-radius:14px; height:120px;
-  display:flex; align-items:center; justify-content:center
+  border-radius:14px; height:120px; display:flex; align-items:center; justify-content:center
 }
 .gallery img{ width:88px; height:88px }
 
-/* ---------- Fixed Footer (opaque) ---------- */
+/* ---------- Fixed Footer (roulette action) ---------- */
 #footer-bar{
-  position:fixed; left:0; right:0; bottom:0;
-  background:var(--bg-elev);
+  position:fixed; left:0; right:0; bottom:0; background:var(--bg-elev);
   border-top:1px solid var(--border);
   padding:12px 16px calc(12px + env(safe-area-inset-bottom));
   z-index:1100; display:flex; justify-content:center;
-  box-shadow: 0 -8px 24px rgba(0,0,0,.45);
+  box-shadow:0 -8px 24px rgba(0,0,0,.45);
 }
 .open-btn{
   min-width:260px; border-radius:999px; padding:14px 20px; font-size:18px; font-weight:600;
@@ -107,38 +104,42 @@ body{
 }
 .open-btn:active{ transform:translateY(1px); background:var(--accent-press) }
 
-/* ---------- Result (smaller card) ---------- */
+/* ---------- Result ---------- */
 .result-overlay{ display:none; position:fixed; inset:0; z-index:1200; background:rgba(0,0,0,.75); backdrop-filter:blur(2px); align-items:center; justify-content:center }
 .result-overlay.is-open{ display:flex }
-.result-sheet{
-    text-align:center; padding:16px
-    --card-size: min(60vw, 420px, 60vh);
-    }
+.result-sheet{ text-align:center; padding:16px; --card-size: min(60vw, 420px, 60vh); }
 .result-title{ margin:0 0 10px }
 .result-card{
-  width: var(--card-size);
-  height: var(--card-size);
+  width: var(--card-size); height: var(--card-size);
   background:var(--panel); border:1px solid var(--border); border-radius:24px;
   display:flex; align-items:center; justify-content:center; margin:0 auto 12px;
 }
 .result-card img{ width:82%; height:82%; object-fit:contain }
 .result-amount{ font-size:28px; margin:6px 0 }
 .result-name{ color:var(--text-dim); margin-bottom:12px }
-.result-ok{  width: calc(var(--card-size)*0.82); border-radius:14px; padding:14px 16px; background:var(--accent); color:#fff; border:none; font-weight:600 }
+.result-ok{ width: calc(var(--card-size)*0.82); border-radius:14px; padding:14px 16px; background:var(--accent); color:#fff; border:none; font-weight:600 }
+
+/* ---------- Bottom Tabbar ---------- */
+.tabbar{
+  position:fixed; left:0; right:0; bottom:0; height:var(--tabbar-h);
+  background:var(--bg-elev); border-top:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-around;
+  padding:6px 8px calc(6px + env(safe-area-inset-bottom)); z-index:900;
+}
+.tabbtn{
+  appearance:none; border:0; background:transparent; color:var(--text-dim);
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+  padding:6px 10px; border-radius:12px; font:inherit; cursor:pointer;
+}
+.tabbtn .ico svg{ width:26px; height:26px; display:block; }
+.tabbtn .lbl{ font-size:12px }
+.tabbtn.is-active{ color:var(--accent); background:rgba(51,144,236,.1) }
 
 /* ---------- Mobile tweaks ---------- */
 @media (max-width:600px){
-  /* опускаем блок «заголовок+крестик» ниже (вместо отступа у рулетки) */
-  .header-row{ margin-top: clamp(28px, 14vh, 120px);
-   margin-bottom: 20px;}
-
-  .roulette-container{
-    height:172px;
-    margin: 0 0 14px;        /* примыкает к заголовку на мобилке */
-  }
+  .header-row{ margin-top: clamp(28px, 14vh, 120px); margin-bottom: 20px; }
+  .roulette-container{ height:172px; margin: 0 0 14px; }
   .roulette-item{ min-width:136px; height:136px }
   .roulette-item img{ width:104px; height:104px }
-  .result-sheet { --card-size: min(52vw, 320px, 52vh);
-  .result-card{ width:min(52vw, 320px, 52vh); height:min(52vw, 320px, 52vh) }
-  .result-card img{ width:80%; height:80% }
+  .result-sheet{ --card-size: min(52vw, 320px, 52vh); }
 }
