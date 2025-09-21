@@ -6,7 +6,8 @@
   --text:#e7ebf0; --text-dim:#aab2bf;
   --accent:#3390ec; --accent-press:#2b7bdc;
   --border:#2d3445; --marker:#3390ec; --radius:16px;
-  --footer-h:96px; --tabbar-h:64px;
+  --footer-h:96px;
+  --tabbar-offset:64px; /* фактическая высота таббара (меряем в JS) */
 }
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -20,7 +21,9 @@ body{
 /* ---------- Tabs containers ---------- */
 .container{
   min-height:100svh; display:grid; place-items:center;
-  padding:0 16px; padding-bottom:calc(16px + var(--tabbar-h)); text-align:center;
+  padding:0 16px;
+  padding-bottom:calc(16px + var(--tabbar-offset)); /* отступ под реальный таббар */
+  text-align:center;
 }
 .container.tab{ display:none; }
 .container.tab.is-active{ display:grid; }
@@ -121,10 +124,13 @@ body{
 
 /* ---------- Bottom Tabbar ---------- */
 .tabbar{
-  position:fixed; left:0; right:0; bottom:0; height:var(--tabbar-h);
+  position:fixed; left:0; right:0; bottom:0;
+  /* height НЕ задаём — рост по контенту и safe-area */
   background:var(--bg-elev); border-top:1px solid var(--border);
   display:flex; align-items:center; justify-content:space-around;
-  padding:6px 8px calc(6px + env(safe-area-inset-bottom)); z-index:900;
+  padding:6px 8px calc(6px + env(safe-area-inset-bottom));
+  box-sizing:border-box;
+  z-index:900;
 }
 .tabbtn{
   appearance:none; border:0; background:transparent; color:var(--text-dim);

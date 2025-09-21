@@ -31,10 +31,21 @@ document.addEventListener("DOMContentLoaded", () => {
   btns.upgrade.addEventListener("click", () => setActiveTab("upgrade"));
   btns.profile.addEventListener("click", () => setActiveTab("profile"));
   window.addEventListener("hashchange", pickInitialTab);
-  function syncTabbar(){ const h=tabbar?.offsetHeight||64; document.documentElement.style.setProperty("--tabbar-h",`${h}px`); }
-  const roTab=("ResizeObserver" in window)? new ResizeObserver(syncTabbar):null; roTab?.observe(tabbar);
-  window.addEventListener("resize", syncTabbar); window.addEventListener("orientationchange", syncTabbar);
-  syncTabbar(); pickInitialTab();
+
+function syncTabbar(){
+    if(!tabbar) return;
+    const h = Math.round(tabbar.getBoundingClientRect().height) || 64;
+    document.documentElement.style.setProperty("--tabbar-offset", `${h}px`);
+  }
+  const roTab = ("ResizeObserver" in window) ? new ResizeObserver(() => requestAnimationFrame(syncTabbar)) : null;
+  roTab?.observe(tabbar);
+  window.addEventListener("resize", () => requestAnimationFrame(syncTabbar));
+  window.addEventListener("orientationchange", () => requestAnimationFrame(syncTabbar));
+  if (window.Telegram?.WebApp?.onEvent) {
+    window.Telegram.WebApp.onEvent("viewportChanged", () => requestAnimationFrame(syncTabbar));
+  }
+  pickInitialTab();
+  requestAnimationFrame(syncTabbar);
 
   // ====== Текущая логика рулетки ======
   const vipCase = document.getElementById("vip-case");
