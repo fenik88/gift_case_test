@@ -111,7 +111,7 @@ body{
 .result-overlay{ display:none; position:fixed; inset:0; z-index:1200; background:rgba(0,0,0,.75); backdrop-filter:blur(2px); align-items:center; justify-content:center }
 .result-overlay.is-open{ display:flex }
 .result-sheet{ text-align:center; padding:16px; --card-size: min(60vw, 420px, 60vh); }
-.result-title{ margin:0 0 10px }
+.result-title{ margin:0 0 10px; font-size: 30px }
 .result-card{
   width: var(--card-size); height: var(--card-size);
   background:var(--panel); border:1px solid var(--border); border-radius:24px;
@@ -148,4 +148,9 @@ body{
   .roulette-item{ min-width:136px; height:136px }
   .roulette-item img{ width:104px; height:104px }
   .result-sheet{ --card-size: min(52vw, 320px, 52vh); }
+  .close {
+      width: 48px; /* Увеличенный размер кнопки */
+      height: 48px;
+      font-size: 20px; /* Увеличенный размер шрифта */
+    }
 }
