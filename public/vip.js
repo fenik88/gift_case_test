@@ -221,6 +221,15 @@ function syncTabbar(){
   spinBtn.addEventListener("pointerdown", () => H.impact("medium"));
   spinBtn.addEventListener("touchstart", () => H.impact("medium"), { passive:true });
 
+  btns.cases.addEventListener("pointerdown", () => H.impact("medium"));
+  btns.cases.addEventListener("touchstart", () => H.impact("medium"), { passive: true });
+
+  btns.upgrade.addEventListener("pointerdown", () => H.impact("medium"));
+  btns.upgrade.addEventListener("touchstart", () => H.impact("medium"), { passive: true });
+
+  btns.profile.addEventListener("pointerdown", () => H.impact("medium"));
+  btns.profile.addEventListener("touchstart", () => H.impact("medium"), { passive: true });
+
   // Spin
   async function handleSpin(){
     if(isSpinning) return; isSpinning=true; spinBtn.disabled=true;
