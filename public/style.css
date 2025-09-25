@@ -64,6 +64,13 @@ body{
 }
 .close:active{ transform: translateY(1px) }
 
+/* ---------- деактивация кнопок ---------- */
+.is-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
 /* ---------- Roulette ---------- */
 .roulette-container{
   position:relative; overflow:hidden; width:100%; height:160px; margin:0 0 12px;

@@ -251,7 +251,9 @@ function syncTabbar(){
 
   // Spin
   async function handleSpin(){
-    if(isSpinning) return; isSpinning=true; spinBtn.disabled=true;
+    if(isSpinning) return; isSpinning=true; spinBtn.disabled=true; closeBtn.disabled=true;
+    spinBtn.classList.add("is-disabled");
+    closeBtn.classList.add("is-disabled");
     try{
       stopIdleSpin();
       const res=await fetch("/api/case/vip",{ method:"POST", headers:{ "Content-Type":"application/json" }, body:JSON.stringify({ userId:"user123" }) });
@@ -280,9 +282,14 @@ function syncTabbar(){
       console.error(err); H.notify("error"); alert("Ошибка: " + err.message); startIdleSpin();
     }finally{
       isSpinning=false; spinBtn.disabled=false;
+      closeBtn.disabled=false;
+      spinBtn.classList.remove("is-disabled");
+     closeBtn.classList.remove("is-disabled");
     }
   }
   spinBtn.addEventListener("click", handleSpin);
+
+
 
  // ===== Upgrade (wheel with pointer) =====
   const upList = document.getElementById("upList");
