@@ -42,6 +42,15 @@ function syncTabbar(){
   roTab?.observe(tabbar);
   window.addEventListener("resize", () => requestAnimationFrame(syncTabbar));
   window.addEventListener("orientationchange", () => requestAnimationFrame(syncTabbar));
+  window.addEventListener("load", () => {
+    // двойной rAF + таймаут — чтобы поймать обновление safe-area в Telegram
+    requestAnimationFrame(() => {
+      syncTabbar();
+      requestAnimationFrame(() => {
+        setTimeout(syncTabbar, 50);
+      });
+    });
+  });
   if (window.Telegram?.WebApp?.onEvent) {
     window.Telegram.WebApp.onEvent("viewportChanged", () => requestAnimationFrame(syncTabbar));
   }

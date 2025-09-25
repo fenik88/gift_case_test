@@ -126,7 +126,6 @@ body{
 .tabbar{
   position:fixed; left:0; right:0; bottom:0;
   /* height НЕ задаём — рост по контенту и safe-area */
-  min-height: clamp(56px, 8vh, 72px); /* Минимум 56px, максимум 72px */
   background:var(--bg-elev); border-top:1px solid var(--border);
   display:flex; align-items:center; justify-content:space-around;
   padding:6px 8px calc(6px + env(safe-area-inset-bottom));
