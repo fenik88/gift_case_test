@@ -149,8 +149,8 @@ body{
   .roulette-item img{ width:104px; height:104px }
   .result-sheet{ --card-size: min(52vw, 320px, 52vh); }
   .close {
-      width: 36px; /* Увеличенный размер кнопки */
-      height: 36px;
+      width: 40px; /* Увеличенный размер кнопки */
+      height: 40px;
       font-size: 30px; /* Увеличенный размер шрифта */
     }
 }
