@@ -18,10 +18,61 @@
 
 <!-- TAB: Апгрейд -->
 <div class="container tab" id="tab-upgrade" aria-hidden="true">
-    <div class="placeholder">
-        <div class="ph-emoji">⬆️</div>
-        <div class="ph-title">Апгрейд</div>
-        <div class="ph-sub">Скоро тут появится апгрейд вещей</div>
+    <div class="upgrade-root">
+        <!-- левая колонка: выбор предмета -->
+        <div class="up-left">
+            <div class="up-col-title">Ваш предмет</div>
+            <div class="up-list" id="upList"></div>
+        </div>
+
+        <!-- центр: колесо + мультипликаторы + кнопка -->
+        <div class="up-center">
+            <div class="up-wheel" id="upWheel">
+                <!-- 300x300 viewBox — рисуем кольцо и сектор успеха, курсор крутится -->
+                <svg id="upSvg" viewBox="0 0 300 300" aria-hidden="true">
+                    <!-- кольцо фона -->
+                    <circle cx="150" cy="150" r="118" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="40"/>
+                    <circle cx="150" cy="150" r="118" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="2"/>
+
+                    <!-- сектор успеха — обновляется JS -->
+                    <path id="upArc" fill="rgba(52,199,89,.35)" stroke="rgba(52,199,89,.9)" stroke-width="2"/>
+
+                    <!-- метки (необязательные) -->
+                    <circle cx="150" cy="150" r="98" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="1" stroke-dasharray="2 6"/>
+
+                    <!-- курсор: линия + наконечник, вращается вокруг центра -->
+                    <g id="upPointer">
+                        <path d="M150 150 L150 26" stroke="var(--accent)" stroke-width="4" stroke-linecap="round"/>
+                        <polygon points="150,16 144,30 156,30" fill="var(--accent)"/>
+                    </g>
+                </svg>
+            </div>
+
+            <!-- мультипликаторы -->
+            <div class="up-mults" id="upMults" role="tablist" aria-label="Мультипликатор">
+                <!-- кнопки рисует JS -->
+            </div>
+
+            <div class="up-chance-row">Шанс: <span id="upChance">—</span></div>
+
+            <!-- кнопка действия -->
+            <button class="up-action" id="upAction">Апгрейд</button>
+
+            <!-- мини-статус -->
+            <div class="up-status" id="upStatus" aria-live="polite"></div>
+        </div>
+
+        <!-- правая колонка: что получим -->
+        <div class="up-right">
+            <div class="up-col-title">Получите при успехе</div>
+            <div class="up-preview" id="upPreview">
+                <div class="up-target-card">
+                    <div class="up-target-img-wrap"><img id="upTargetImg" alt=""></div>
+                    <div class="up-target-name" id="upTargetName">—</div>
+                    <div class="up-target-mult" id="upTargetMult">x—</div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

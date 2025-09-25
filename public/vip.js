@@ -13,6 +13,9 @@ document.addEventListener("DOMContentLoaded", () => {
     upgrade: document.getElementById("btn-tab-upgrade"),
     profile: document.getElementById("btn-tab-profile"),
   };
+
+
+
   function setActiveTab(name){
     Object.entries(tabs).forEach(([k, el]) => {
       const active = k === name;
@@ -280,6 +283,219 @@ function syncTabbar(){
     }
   }
   spinBtn.addEventListener("click", handleSpin);
+
+ // ===== Upgrade (wheel with pointer) =====
+  const upList = document.getElementById("upList");
+  const upSvg = document.getElementById("upSvg");
+  const upArc = document.getElementById("upArc");
+  const upPointer = document.getElementById("upPointer");
+  const upMults = document.getElementById("upMults");
+  const upChance = document.getElementById("upChance");
+  const upAction = document.getElementById("upAction");
+  const upStatus = document.getElementById("upStatus");
+  const upTargetImg = document.getElementById("upTargetImg");
+  const upTargetName = document.getElementById("upTargetName");
+  const upTargetMult = document.getElementById("upTargetMult");
+
+  const MULTS = [1.25, 1.5, 2, 3, 5, 10];
+  let upSelectedGift = 0;      // индекс слева
+  let upSelectedMult = 2;      // по умолчанию x2
+  let upPointerAngle = 0;      // текущий угол курсора (deg)
+  let upRolling = false;
+
+  // слева: список
+  function buildUpList(){
+    if(!upList) return;
+    upList.innerHTML = "";
+    gifts.forEach((g, i) => {
+      const d = document.createElement("div");
+      d.className = "up-item" + (i===upSelectedGift ? " is-selected" : "");
+      const im = document.createElement("img");
+      im.src = STATIC_PATH + g.file; im.alt = g.name;
+      d.appendChild(im);
+      d.addEventListener("click", () => { upSelectedGift = i; updatePreview(); renderUpListSelection(); });
+      upList.appendChild(d);
+    });
+  }
+  function renderUpListSelection(){
+    [...upList.children].forEach((el, idx) => el.classList.toggle("is-selected", idx===upSelectedGift));
+  }
+
+  // мультипликаторы
+  function buildMults(){
+    if(!upMults) return;
+    upMults.innerHTML = "";
+    MULTS.forEach(m => {
+      const b = document.createElement("button");
+      b.type="button";
+      b.className = "up-mult-btn" + (m===upSelectedMult ? " is-selected" : "");
+      b.textContent = `x${m}`;
+      b.addEventListener("click", () => { upSelectedMult = m; renderMults(); updateChanceAndArc(); updatePreview(); H.impact("light"); });
+      upMults.appendChild(b);
+    });
+  }
+  function renderMults(){
+    [...upMults.children].forEach((b, idx) => {
+      const m = MULTS[idx];
+      b.classList.toggle("is-selected", m===upSelectedMult);
+    });
+  }
+
+  // шанс и сектор успеха
+  function chance(){ return Math.max(0.02, Math.min(0.98, 1 / upSelectedMult)); } // ограничим 2..98% чтобы край не лип
+  function updateChanceAndArc(){
+    const p = chance();
+    if (upChance) upChance.textContent = `${Math.round(p*100)}%`;
+    drawSuccessArc(p);
+  }
+  function polar(cx,cy,r,deg){
+    const rad = (deg*Math.PI)/180;
+    return { x: cx + r*Math.sin(rad), y: cy - r*Math.cos(rad) };
+  }
+  function drawSuccessArc(p){
+    if(!upArc) return;
+    const cx=150, cy=150, rOuter=118, rInner=78; // ширина кольца 40
+    const a = Math.max(0.1, Math.min(359.9, p*360));
+    const start = -a/2, end = a/2; // сектор симметрично относительно верха
+    const largeArc = a>180 ? 1 : 0;
+
+    const A = polar(cx,cy,rOuter,start);
+    const B = polar(cx,cy,rOuter,end);
+    const C = polar(cx,cy,rInner,end);
+    const D = polar(cx,cy,rInner,start);
+
+    const d = [
+      `M ${A.x.toFixed(3)} ${A.y.toFixed(3)}`,
+      `A ${rOuter} ${rOuter} 0 ${largeArc} 1 ${B.x.toFixed(3)} ${B.y.toFixed(3)}`,
+      `L ${C.x.toFixed(3)} ${C.y.toFixed(3)}`,
+      `A ${rInner} ${rInner} 0 ${largeArc} 0 ${D.x.toFixed(3)} ${D.y.toFixed(3)}`,
+      "Z"
+    ].join(" ");
+    upArc.setAttribute("d", d);
+  }
+
+  // предпросмотр «что получим»
+  function updatePreview(){
+    const base = gifts[upSelectedGift];
+    // просто выберем «таргет» визуально: тот же предмет, но множитель меняется
+    if (upTargetImg){ upTargetImg.src = STATIC_PATH + base.file; upTargetImg.alt = base.name; }
+    if (upTargetName) upTargetName.textContent = base.name;
+    if (upTargetMult) upTargetMult.textContent = `x${upSelectedMult}`;
+  }
+
+  // анимация курсора (именно курсор крутится, не колесо)
+  function rotatePointerTo(targetDeg, durationMs){
+    return new Promise(res=>{
+      const start = upPointerAngle;
+      const delta = targetDeg - start;
+      if(Math.abs(delta) < 0.001 || durationMs<=0){
+        upPointerAngle = targetDeg;
+        upPointer.setAttribute("transform", `rotate(${upPointerAngle.toFixed(3)} 150 150)`);
+        res(); return;
+      }
+      const t0 = performance.now();
+      const step = (now)=>{
+        let t = (now - t0) / durationMs;
+        if (t >= 1){
+          upPointerAngle = targetDeg;
+          upPointer.setAttribute("transform", `rotate(${upPointerAngle.toFixed(3)} 150 150)`);
+          res(); return;
+        }
+        t = Math.max(0, Math.min(1, t));
+        const a = start + delta * easeOutHybrid(t); // быстро -> плавное длительное замедление
+        upPointer.setAttribute("transform", `rotate(${a.toFixed(3)} 150 150)`);
+        requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    });
+  }
+
+  // запуск апгрейда
+  async function runUpgrade(){
+    if (upRolling) return; upRolling = true; upAction.disabled = true;
+    try{
+      // шанс
+      const p = chance();
+
+      // решаем исход
+      const success = Math.random() < p;
+
+      // вычисляем конечный угол: выберем случайное место ВНУТРИ сектора (успех)
+      // или снаружи (неуспех). Сектор [-a/2; +a/2] относительно "вверх" (0°).
+      const a = p*360;
+      const margin = 6; // небольшой отступ от границ сектора в градусах
+      const sectorStart = -a/2 + margin;
+      const sectorEnd   =  a/2 - margin;
+
+      // углы снаружи — две зоны: [-180; sectorStart-margin] и [sectorEnd+margin; 180]
+      function randBetween(min,max){ return min + Math.random()*(max-min); }
+
+      let targetAngleWithinTurn;
+      if (success){
+        const s = Math.min(sectorStart, sectorEnd), e = Math.max(sectorStart, sectorEnd);
+        targetAngleWithinTurn = (a>2*margin) ? randBetween(s, e) : 0; // если сектор совсем маленький
+      } else {
+        // выберем более длинный вне-секторный диапазон
+        const leftLen  = (sectorStart - margin) - (-180);
+        const rightLen = 180 - (sectorEnd + margin);
+        if (rightLen >= leftLen){
+          targetAngleWithinTurn = randBetween(sectorEnd + margin, 180);
+        } else {
+          targetAngleWithinTurn = randBetween(-180, sectorStart - margin);
+        }
+      }
+
+      // текущий угол по модулю 360
+      const cur = ((upPointerAngle % 360) + 360) % 360; // [0..360)
+      // наша система углов: 0° — вверх, положительное по часовой
+      // targetAngleWithinTurn в диапазоне [-180..180], приведём к [0..360)
+      const targetWithinTurnNorm = ((targetAngleWithinTurn % 360) + 360) % 360;
+
+      // дельта до цели в текущем обороте
+      let deltaToTarget = targetWithinTurnNorm - cur;
+      if (deltaToTarget < 0) deltaToTarget += 360;
+
+      // добавим 5–8 полных оборотов
+      const fullSpins = 5 + Math.floor(Math.random()*4); // 5..8
+      const end = upPointerAngle + fullSpins*360 + deltaToTarget;
+
+      // длительность из средней угловой скорости
+      const avgDegPerSec = 900; // средняя скорость
+      const dur = Math.min(6500, Math.max(2800, (end - upPointerAngle) / avgDegPerSec * 1000));
+
+      H.impact("medium");
+      await rotatePointerTo(end, dur);
+
+      // статус
+      if (success){
+        H.notify("success");
+        upStatus.textContent = "Апгрейд успешен!";
+      } else {
+        H.notify("error");
+        upStatus.textContent = "Неудача. Предмет сгорел.";
+      }
+    } catch(e){
+      console.error(e);
+      H.notify("error");
+      upStatus.textContent = "Ошибка апгрейда.";
+    } finally {
+      upRolling = false; upAction.disabled = false;
+    }
+  }
+
+  // init Upgrade
+  function initUpgrade(){
+    buildUpList();
+    buildMults();
+    renderMults();
+    updatePreview();
+    updateChanceAndArc();
+    upAction?.addEventListener("click", runUpgrade);
+    upAction?.addEventListener("pointerdown", () => H.impact("medium"));
+    upAction?.addEventListener("touchstart", () => H.impact("medium"), { passive:true });
+  }
+  initUpgrade();
+
 
   // Init
   preloadImages(gifts); fillGallery(); syncFooter();
