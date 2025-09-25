@@ -233,6 +233,9 @@ function syncTabbar(){
   vipCase.addEventListener("pointerdown", () => H.impact("medium"));
   vipCase.addEventListener("touchstart", () => H.impact("medium"), { passive: true });
 
+    closeBtn.addEventListener("pointerdown", () => H.impact("medium"));
+    closeBtn.addEventListener("touchstart", () => H.impact("medium"), { passive: true });
+
   // Spin
   async function handleSpin(){
     if(isSpinning) return; isSpinning=true; spinBtn.disabled=true;
