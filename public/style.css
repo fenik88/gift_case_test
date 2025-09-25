@@ -120,7 +120,7 @@ body{
 .result-card img{ width:82%; height:82%; object-fit:contain }
 .result-amount{ font-size:28px; margin:6px 0 }
 .result-name{ color:var(--text-dim); margin-bottom:12px }
-.result-ok{ width: calc(var(--card-size)*0.82); border-radius:14px; padding:14px 16px; background:var(--accent); color:#fff; border:none; font-weight:600 }
+.result-ok{ width: calc(var(--card-size)*0.82); border-radius:14px; padding:14px 16px; background:var(--accent); color:#fff; border:none; font-weight:600; font-size: 18px; /* Increased font size */ }
 
 /* ---------- Bottom Tabbar ---------- */
 .tabbar{
