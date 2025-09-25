@@ -26,6 +26,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     if (location.hash !== `#${name}`) history.replaceState(null, "", `#${name}`);
   }
+
+  const metaViewport = document.querySelector('meta[name="viewport"]');
+  if (metaViewport) {
+    metaViewport.setAttribute("content", "width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0");
+  }
+
   function pickInitialTab(){ const h=(location.hash||"#cases").slice(1); setActiveTab(tabs[h]?h:"cases"); }
   btns.cases.addEventListener("click", () => setActiveTab("cases"));
   btns.upgrade.addEventListener("click", () => setActiveTab("upgrade"));
