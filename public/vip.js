@@ -1,4 +1,19 @@
 // filepath: public/vip.js
+
+
+// At the top of your JavaScript file, after getting the tg reference
+const tg = window.Telegram?.WebApp;
+
+// Expand the app to full viewport
+tg?.expand();
+
+// If you also want to hide the header (recommended for fullscreen)
+tg?.setHeaderColor?.("secondary_bg_color");
+// OR to match your app's background
+// tg?.setHeaderColor?.("bg_color");
+
+
+
 // Таб-бар с SVG и текущая логика рулетки/вибраций. Убраны только дубли переменных (why: исключить redeclaration).
 document.addEventListener("DOMContentLoaded", () => {
   // ----- Tabs (SPA)
