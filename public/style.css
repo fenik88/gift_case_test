@@ -302,6 +302,64 @@ body{
 .up-target-mult{ color:var(--text-dim) }
 
 
+/* ---------- Profile (scoped to #tab-profile) ---------- */
+/* Make profile tab a normal page flow similar to upgrade */
+#tab-profile.container {
+  padding: 0 16px calc(16px + var(--tabbar-offset));
+  text-align: initial;
+}
+#tab-profile.container.is-active { display:block; }
+
+/* Layout */
+#tab-profile .profile-root{
+  display:flex; flex-direction:column; gap:16px;
+  width:100%; max-width:760px; margin:0 auto;
+}
+
+/* Chips row */
+#tab-profile .profile-chips{ display:flex; align-items:center; gap:10px; margin-top: clamp(16px, 8vh, 40px); }
+#tab-profile .chip{
+  background:var(--bg-elev); border:1px solid var(--border);
+  color:var(--text); border-radius:999px; padding:8px 12px; display:inline-flex; align-items:center; gap:8px;
+}
+#tab-profile .chip-compact{ padding:6px 10px; font-size:14px }
+#tab-profile .chip-balance{ margin-left:auto; padding:6px 10px; }
+#tab-profile .chip-balance .chip-ico{ width:22px; height:22px; border-radius:999px; display:grid; place-items:center; background:rgba(51,144,236,.16); color:var(--accent); font-size:13px }
+#tab-profile .chip-balance .val{ font-weight:800 }
+#tab-profile .chip-balance .add-btn{
+  width:26px; height:26px; border-radius:999px; border:1px solid var(--border);
+  background:var(--bg); color:var(--text); cursor:pointer;
+}
+
+/* Avatar + name */
+#tab-profile .profile-avatar{ display:grid; place-items:center; margin-top: clamp(8px, 8vh, 36px); }
+#tab-profile .profile-avatar img, #tab-profile .profile-avatar .avatar-ico{
+  width:140px; height:140px; border-radius:999px; object-fit:cover;
+  background:var(--panel); border:1px solid var(--border); box-shadow:0 8px 24px rgba(0,0,0,.35);
+}
+#tab-profile .profile-name{ text-align:center; font-size:28px; font-weight:800; margin-top:10px }
+#tab-profile .profile-name .bio{ color:var(--text-dim); font-weight:700 }
+
+/* Action buttons */
+#tab-profile .profile-actions{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:8px 0 6px }
+#tab-profile .btn{
+  appearance:none; border:1px solid var(--border); background:var(--panel); color:var(--text);
+  border-radius:16px; padding:14px 16px; font-weight:700; font-size:18px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; gap:8px; transition:transform .06s, background .12s, border-color .12s
+}
+#tab-profile .btn:active{ transform:translateY(1px) }
+#tab-profile .btn-primary{ background:var(--accent); color:#fff; border-color:rgba(255,255,255,.18); box-shadow:0 6px 18px rgba(51,144,236,.35) }
+#tab-profile .btn-outline{ background:transparent; border-color:rgba(255,255,255,.24) }
+#tab-profile .btn-chip{ padding:8px 12px; border-radius:12px; background:rgba(51,144,236,.12); color:var(--accent); border:1px solid rgba(51,144,236,.5); font-weight:700 }
+
+/* Inventory card */
+#tab-profile .profile-card{ background:var(--bg-elev); border:1px solid var(--border); border-radius:16px; overflow:hidden }
+#tab-profile .profile-card-header{ display:flex; align-items:center; justify-content:space-between; padding:14px; border-bottom:1px solid var(--border) }
+#tab-profile .profile-card-header .title{ font-weight:700; color:var(--text-dim) }
+#tab-profile .inv-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; padding:12px }
+#tab-profile .inv-item{ background:var(--panel); border:1px solid var(--border); border-radius:14px; height:110px; display:flex; align-items:center; justify-content:center }
+#tab-profile .inv-item img{ width:78px; height:78px; object-fit:contain }
+
 /* ---------- Mobile tweaks ---------- */
 @media (max-width:600px){
 

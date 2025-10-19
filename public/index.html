@@ -78,10 +78,44 @@
 
 <!-- TAB: Профиль -->
 <div class="container tab" id="tab-profile" aria-hidden="true">
-    <div class="placeholder">
-        <div class="ph-emoji">👤</div>
-        <div class="ph-title">Профиль</div>
-        <div class="ph-sub">Здесь будет ваш инвентарь и статистика</div>
+    <div class="profile-root">
+        <div class="profile-chips">
+            <div class="chip chip-compact" title="Регион">🇷🇺</div>
+            <div class="chip chip-compact" title="Устройство">📱</div>
+            <div class="chip chip-balance" role="group" aria-label="Баланс">
+                <span class="chip-ico" aria-hidden="true">💎</span>
+                <span class="val">0.00</span>
+                <button class="add-btn" type="button" aria-label="Пополнить баланс">+</button>
+            </div>
+        </div>
+
+        <div class="profile-avatar">
+            <img src="gift1.svg" alt="Аватар" />
+        </div>
+        <div class="profile-name">Michael <span class="bio">{bio}</span></div>
+
+        <div class="profile-actions">
+            <button type="button" class="btn btn-primary">
+                <span class="btn-txt">Пополнить</span>
+                <span class="btn-ico" aria-hidden="true">🎁</span>
+            </button>
+            <button type="button" class="btn btn-outline">
+                <span class="btn-txt">Пополнить</span>
+                <span class="btn-ico" aria-hidden="true">💎</span>
+            </button>
+        </div>
+
+        <div class="profile-card">
+            <div class="profile-card-header">
+                <div class="title">Инвентарь (0)</div>
+                <button type="button" class="btn btn-chip">Продать все</button>
+            </div>
+            <div class="inv-grid">
+                <div class="inv-item"><img src="gift.svg" alt="" /></div>
+                <div class="inv-item"><img src="gift.svg" alt="" /></div>
+                <div class="inv-item"><img src="gift.svg" alt="" /></div>
+            </div>
+        </div>
     </div>
 </div>
 
