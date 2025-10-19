@@ -521,4 +521,34 @@ function syncTabbar(){
 
   // Init
   preloadImages(gifts); fillGallery(); syncFooter();
+
+  // ===== Profile: load Telegram user's name and photo =====
+  (function initProfileFromTelegram(){
+    const nameEl = document.getElementById("profileName");
+    const avatarEl = document.getElementById("profileAvatar");
+    try {
+      const user = tg?.initDataUnsafe?.user;
+      if (!user) return; // not inside Telegram or no user data
+
+      const name = user.username
+        ? `@${user.username}`
+        : [user.first_name, user.last_name].filter(Boolean).join(" ") || "User";
+
+      if (nameEl){
+        const bioEl = nameEl.querySelector(".bio");
+        nameEl.textContent = "";
+        nameEl.append(document.createTextNode(name + " "));
+        if (bioEl) nameEl.appendChild(bioEl);
+      }
+
+      if (avatarEl && user.photo_url){
+        avatarEl.src = user.photo_url;
+        avatarEl.alt = `${name}`;
+        avatarEl.referrerPolicy = "no-referrer"; // avoid referrer issues
+        avatarEl.loading = "lazy"; avatarEl.decoding = "async";
+      }
+    } catch (e) {
+      console.warn("Profile load skipped:", e);
+    }
+  })();
 });
