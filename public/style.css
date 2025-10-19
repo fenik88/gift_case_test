@@ -387,7 +387,7 @@ body{
     }
 
   /* Profile mobile tweaks */
-  #tab-profile .profile-chips{ gap:8px; margin-top: 3px; }
+  #tab-profile .profile-chips{ gap:8px; margin-top: clamp(24px, 12vh, 64px); }
   #tab-profile .chip{ padding:6px 10px; font-size:13px }
   #tab-profile .chip-balance .val{ font-size:14px }
   #tab-profile .profile-avatar img, #tab-profile .profile-avatar .avatar-ico{ width:132px; height:132px }
@@ -396,20 +396,25 @@ body{
   #tab-profile .btn{ padding:12px 14px; font-size:16px }
   #tab-profile .profile-card{ border-radius:18px }
   #tab-profile .inv-grid{ gap:10px }
-  #tab-profile .inv-item{ height:100px }
+  #tab-profile .inv-item{ height: 120px; }
+}
+
+/* ---------- Launch mode overrides (fullscreen vs fullsize) ---------- */
+/* When Telegram launches the app in fullscreen, allow extra space above chips */
+html.tg-fullscreen #tab-profile .profile-chips{
+  margin-top: clamp(24px, 12vh, 64px);
 }
 
 /* ---------- Desktop tweaks for Profile ---------- */
 @media (min-width: 601px){
   /* reduce top whitespace on desktop */
-  #tab-profile.container{ padding-top: 12px; }
 
   /* center chips and tighten top spacing */
   #tab-profile .profile-chips{
     justify-content: center;
     flex-wrap: wrap;
     overflow: visible;
-    margin-top: 3 px;
+    margin-top: 12px;
     gap: 12px;
   }
   #tab-profile .chip-balance{ margin-left: 0; }
