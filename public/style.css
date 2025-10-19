@@ -399,3 +399,9 @@ body{
   #tab-profile .inv-item{ height:100px }
 
 }
+
+/* ---------- Desktop tweaks for Profile ---------- */
+@media (min-width: 601px){
+  #tab-profile .profile-chips{
+    justify-content: center;
+    flex-wrap: wrap;
