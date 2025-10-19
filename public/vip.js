@@ -70,12 +70,10 @@ function syncTabbar(){
     });
   });
   if (window.Telegram?.WebApp?.onEvent) {
-    window.Telegram.WebApp.onEvent("viewportChanged", () => { requestAnimationFrame(syncTabbar); updateLaunchModeClass(); });
+    window.Telegram.WebApp.onEvent("viewportChanged", () => requestAnimationFrame(syncTabbar));
   }
   pickInitialTab();
   requestAnimationFrame(syncTabbar);
-  updateLaunchModeClass();
-  window.addEventListener("resize", updateLaunchModeClass);
 
   // ====== Текущая логика рулетки ======
   const vipCase = document.getElementById("vip-case");
@@ -98,41 +96,6 @@ function syncTabbar(){
   // Telegram + haptics
   const tg = window.Telegram?.WebApp; tg?.ready?.(); tg?.expand?.();
   const PLATFORM = tg?.platform || "web";
-  
-  // Read launch mode from URL (?mode=fullscreen|fullsize|compact)
-  function getModeFromUrl(){
-    try{
-      const p = new URLSearchParams(window.location.search).get("mode");
-      if(!p) return null;
-      const m = String(p).toLowerCase();
-      if(m === "fullscreen") return "fullscreen";
-      if(m === "fullsize" || m === "compact") return "fullsize"; // treat compact as fullsize layout
-      return null;
-    }catch{ return null; }
-  }
-
-  // Detect fullscreen vs fullsize and set a class on <html>
-  function detectFullscreen(){
-    try { if (typeof tg?.isFullscreen === "boolean") return tg.isFullscreen; } catch {}
-    const vsh = tg?.viewportStableHeight || 0;
-    const vh  = tg?.viewportHeight || 0;
-    const wh  = window.innerHeight || 0;
-    const cand = Math.max(vsh, vh, 0);
-    if (cand && wh) {
-      const diff = Math.abs(wh - cand);
-      if (diff <= 20) return true; // almost occupies the whole viewport
-    }
-    // Fallback heuristic: mobile platforms usually fullscreen after expand
-    if (PLATFORM === "ios" || PLATFORM === "android") return !!tg?.isExpanded;
-    return false;
-  }
-  function updateLaunchModeClass(){
-    const urlMode = getModeFromUrl();
-    const fs = urlMode ? (urlMode === "fullscreen") : detectFullscreen();
-    const root = document.documentElement;
-    root.classList.toggle("tg-fullscreen", fs);
-    root.classList.toggle("tg-fullsize", !fs);
-  }
   const SUPPORTS_TG_HAPTICS = !!tg?.HapticFeedback && (PLATFORM === "ios" || PLATFORM === "android");
   function primeHapticsOnce(){ try{ tg?.HapticFeedback?.impactOccurred?.("light"); }catch{} if(!SUPPORTS_TG_HAPTICS && "vibrate" in navigator) navigator.vibrate(8); }
   document.addEventListener("touchstart", primeHapticsOnce, { once:true, passive:true });
