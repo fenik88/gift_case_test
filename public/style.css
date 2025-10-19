@@ -387,7 +387,7 @@ body{
     }
 
   /* Profile mobile tweaks */
-  #tab-profile .profile-chips{ gap:8px; margin-top: clamp(24px, 12vh, 64px); }
+  #tab-profile .profile-chips{ gap:8px; margin-top: 3px; }
   #tab-profile .chip{ padding:6px 10px; font-size:13px }
   #tab-profile .chip-balance .val{ font-size:14px }
   #tab-profile .profile-avatar img, #tab-profile .profile-avatar .avatar-ico{ width:132px; height:132px }
