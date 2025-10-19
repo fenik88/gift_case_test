@@ -96,6 +96,20 @@ function syncTabbar(){
   // Telegram + haptics
   const tg = window.Telegram?.WebApp; tg?.ready?.(); tg?.expand?.();
   const PLATFORM = tg?.platform || "web";
+  
+  // Prefer explicit Telegram launch param: tgWebAppFullscreen=1|0
+  (function applyFullscreenFromUrl(){
+    try{
+      const sp = new URLSearchParams(window.location.search);
+      const raw = sp.get("tgWebAppFullscreen");
+      if (raw == null) return; // no explicit param — keep default CSS
+      const v = String(raw).toLowerCase();
+      const isFs = (v === "1" || v === "true" || v === "yes");
+      const root = document.documentElement;
+      root.classList.toggle("tg-fullscreen", isFs);
+      root.classList.toggle("tg-fullsize", !isFs);
+    }catch(_){}
+  })();
   const SUPPORTS_TG_HAPTICS = !!tg?.HapticFeedback && (PLATFORM === "ios" || PLATFORM === "android");
   function primeHapticsOnce(){ try{ tg?.HapticFeedback?.impactOccurred?.("light"); }catch{} if(!SUPPORTS_TG_HAPTICS && "vibrate" in navigator) navigator.vibrate(8); }
   document.addEventListener("touchstart", primeHapticsOnce, { once:true, passive:true });
