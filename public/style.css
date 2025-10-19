@@ -305,7 +305,7 @@ body{
 /* ---------- Profile (scoped to #tab-profile) ---------- */
 /* Make profile tab a normal page flow similar to upgrade */
 #tab-profile.container {
-  padding: 0 16px calc(16px + var(--tabbar-offset));
+  padding: calc(8px + env(safe-area-inset-top)) 16px calc(16px + var(--tabbar-offset));
   text-align: initial;
 }
 #tab-profile.container.is-active { display:block; }
@@ -317,7 +317,14 @@ body{
 }
 
 /* Chips row */
-#tab-profile .profile-chips{ display:flex; align-items:center; gap:10px; margin-top: clamp(16px, 8vh, 40px); }
+#tab-profile .profile-chips{
+  display:flex; align-items:center; gap:10px;
+  margin-top: clamp(16px, 8vh, 40px);
+  flex-wrap: nowrap;
+  overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:2px;
+  scrollbar-width: none; /* Firefox */
+}
+#tab-profile .profile-chips::-webkit-scrollbar{ display:none; }
 #tab-profile .chip{
   background:var(--bg-elev); border:1px solid var(--border);
   color:var(--text); border-radius:999px; padding:8px 12px; display:inline-flex; align-items:center; gap:8px;
@@ -335,7 +342,7 @@ body{
 #tab-profile .profile-avatar{ display:grid; place-items:center; margin-top: clamp(8px, 8vh, 36px); }
 #tab-profile .profile-avatar img, #tab-profile .profile-avatar .avatar-ico{
   width:140px; height:140px; border-radius:999px; object-fit:cover;
-  background:var(--panel); border:1px solid var(--border); box-shadow:0 8px 24px rgba(0,0,0,.35);
+  background:var(--panel); border:1px solid var(--border); box-shadow:0 8px 24px rgba(0,0,0,.35), 0 0 0 6px rgba(255,255,255,.03);
 }
 #tab-profile .profile-name{ text-align:center; font-size:28px; font-weight:800; margin-top:10px }
 #tab-profile .profile-name .bio{ color:var(--text-dim); font-weight:700 }
@@ -348,12 +355,13 @@ body{
   display:flex; align-items:center; justify-content:center; gap:8px; transition:transform .06s, background .12s, border-color .12s
 }
 #tab-profile .btn:active{ transform:translateY(1px) }
+#tab-profile .btn{ border-radius:18px; }
 #tab-profile .btn-primary{ background:var(--accent); color:#fff; border-color:rgba(255,255,255,.18); box-shadow:0 6px 18px rgba(51,144,236,.35) }
-#tab-profile .btn-outline{ background:transparent; border-color:rgba(255,255,255,.24) }
+#tab-profile .btn-outline{ background:var(--bg-elev); border:2px solid rgba(255,255,255,.28) }
 #tab-profile .btn-chip{ padding:8px 12px; border-radius:12px; background:rgba(51,144,236,.12); color:var(--accent); border:1px solid rgba(51,144,236,.5); font-weight:700 }
 
 /* Inventory card */
-#tab-profile .profile-card{ background:var(--bg-elev); border:1px solid var(--border); border-radius:16px; overflow:hidden }
+#tab-profile .profile-card{ background:var(--bg-elev); border:1px solid var(--border); border-radius:18px; overflow:hidden; box-shadow:0 8px 22px rgba(0,0,0,.25) }
 #tab-profile .profile-card-header{ display:flex; align-items:center; justify-content:space-between; padding:14px; border-bottom:1px solid var(--border) }
 #tab-profile .profile-card-header .title{ font-weight:700; color:var(--text-dim) }
 #tab-profile .inv-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; padding:12px }
@@ -378,7 +386,16 @@ body{
       font-size: 30px; /* Увеличенный размер шрифта */
     }
 
-
-
+  /* Profile mobile tweaks */
+  #tab-profile .profile-chips{ gap:8px; margin-top: clamp(24px, 12vh, 64px); }
+  #tab-profile .chip{ padding:6px 10px; font-size:13px }
+  #tab-profile .chip-balance .val{ font-size:14px }
+  #tab-profile .profile-avatar img, #tab-profile .profile-avatar .avatar-ico{ width:132px; height:132px }
+  #tab-profile .profile-name{ font-size:26px }
+  #tab-profile .profile-actions{ grid-template-columns:1fr 1fr; gap:10px }
+  #tab-profile .btn{ padding:12px 14px; font-size:16px }
+  #tab-profile .profile-card{ border-radius:18px }
+  #tab-profile .inv-grid{ gap:10px }
+  #tab-profile .inv-item{ height:100px }
 
 }
