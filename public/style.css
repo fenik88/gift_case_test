@@ -405,6 +405,12 @@ html.tg-fullscreen #tab-profile .profile-chips{
   margin-top: clamp(24px, 12vh, 64px);
 }
 
+/* Ensure desktop-specific overrides win for each mode */
+@media (min-width:601px){
+  html.tg-fullscreen #tab-profile .profile-chips{ margin-top: clamp(24px, 12vh, 64px); }
+  html.tg-fullsize   #tab-profile .profile-chips{ margin-top: 12px; }
+}
+
 /* ---------- Desktop tweaks for Profile ---------- */
 @media (min-width: 601px){
   /* reduce top whitespace on desktop */

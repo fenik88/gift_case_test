@@ -99,6 +99,18 @@ function syncTabbar(){
   const tg = window.Telegram?.WebApp; tg?.ready?.(); tg?.expand?.();
   const PLATFORM = tg?.platform || "web";
   
+  // Read launch mode from URL (?mode=fullscreen|fullsize|compact)
+  function getModeFromUrl(){
+    try{
+      const p = new URLSearchParams(window.location.search).get("mode");
+      if(!p) return null;
+      const m = String(p).toLowerCase();
+      if(m === "fullscreen") return "fullscreen";
+      if(m === "fullsize" || m === "compact") return "fullsize"; // treat compact as fullsize layout
+      return null;
+    }catch{ return null; }
+  }
+
   // Detect fullscreen vs fullsize and set a class on <html>
   function detectFullscreen(){
     try { if (typeof tg?.isFullscreen === "boolean") return tg.isFullscreen; } catch {}
@@ -115,7 +127,8 @@ function syncTabbar(){
     return false;
   }
   function updateLaunchModeClass(){
-    const fs = detectFullscreen();
+    const urlMode = getModeFromUrl();
+    const fs = urlMode ? (urlMode === "fullscreen") : detectFullscreen();
     const root = document.documentElement;
     root.classList.toggle("tg-fullscreen", fs);
     root.classList.toggle("tg-fullsize", !fs);
