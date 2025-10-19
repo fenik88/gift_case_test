@@ -156,9 +156,12 @@ body{
 
 /* Вкладка апгрейда ведёт себя как обычная страница (а не grid-центр из .container) */
 #tab-upgrade.container {
-  display: block;
   padding: 0 16px calc(16px + var(--tabbar-offset));
   text-align: initial;
+}
+/* Делать видимой вкладку апгрейда только когда она активна, и использовать блочную раскладку */
+#tab-upgrade.container.is-active {
+  display: block;
 }
 
 /* Корневой блок апгрейда — всегда одна колонка по центру */
