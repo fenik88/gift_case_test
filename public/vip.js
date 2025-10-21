@@ -117,15 +117,19 @@ function syncTabbar(){
         root.style.setProperty("--profile-pad-top", `${padTop}px`);
         // Chips should sit a bit below the start of content in fullscreen
         root.style.setProperty("--chips-top", `12px`);
+        // Header row should sit just below safe area in fullscreen
+        root.style.setProperty("--header-row-mt", `${(insetTop > 0 ? insetTop : 0) + 8}px`);
         // Roulette overlay should hug the top in fullscreen
                 root.style.setProperty("--slider-top", `0px`);
       } else {
         root.style.setProperty("--chips-top", `0px`);
         root.style.setProperty("--profile-pad-top", `0px`);
-        // In fullsize keep a visible gap below Telegram header
-                const HEADER_APPROX = 56; // px
-                const sliderTop = (insetTop > 0 ? insetTop : 0) + HEADER_APPROX;
-                root.style.setProperty("--slider-top", `${sliderTop}px`);
+        // In fullsize add a visible gap below Telegram header for the header row
+        const HEADER_APPROX = 56; // px
+        const headerRowMt = (insetTop > 0 ? insetTop : 0) + HEADER_APPROX;
+        root.style.setProperty("--header-row-mt", `${headerRowMt}px`);
+        // Slider content stays flush to top; spacing comes from header row margin
+        root.style.setProperty("--slider-top", `0px`);
       }
     }catch(e){ /* noop */ }
   }

@@ -14,6 +14,7 @@
   --profile-pad-top: 0px; /* default top padding for profile container */
   --header-offset: 56px; /* approximate Telegram header pill height */
   --slider-top: 0px; /* top offset for roulette overlay in fullsize */
+  --header-row-mt: 8px; /* adaptive top margin for slider header row */
 }
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -61,7 +62,7 @@ body{
 }
 
 /* --- Ряд над рулеткой --- */
-.header-row{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin:8px 2px 20px; }
+.header-row{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin:var(--header-row-mt, 8px) 2px 20px; }
 .title{ margin:0 }
 .close{
   position:static; display:inline-flex; align-items:center; justify-content:center;
