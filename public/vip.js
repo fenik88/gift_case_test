@@ -70,10 +70,13 @@ function syncTabbar(){
     });
   });
   if (window.Telegram?.WebApp?.onEvent) {
-    window.Telegram.WebApp.onEvent("viewportChanged", () => requestAnimationFrame(syncTabbar));
+    window.Telegram.WebApp.onEvent("viewportChanged", () => {
+      requestAnimationFrame(() => { syncTabbar(); applyFullscreenRuntime(); });
+    });
   }
   pickInitialTab();
-  requestAnimationFrame(syncTabbar);
+  requestAnimationFrame(() => { syncTabbar(); applyFullscreenRuntime(); });
+  window.addEventListener("resize", applyFullscreenRuntime);
 
   // ====== Текущая логика рулетки ======
   const vipCase = document.getElementById("vip-case");
@@ -97,19 +100,24 @@ function syncTabbar(){
   const tg = window.Telegram?.WebApp; tg?.ready?.(); tg?.expand?.();
   const PLATFORM = tg?.platform || "web";
   
-  // Prefer explicit Telegram launch param: tgWebAppFullscreen=1|0
-  (function applyFullscreenFromUrl(){
+  // Runtime fullscreen detection using Telegram.WebApp flags and safe-area insets
+  function applyFullscreenRuntime(){
     try{
-      const sp = new URLSearchParams(window.location.search);
-      const raw = sp.get("tgWebAppFullscreen");
-      if (raw == null) return; // no explicit param — keep default CSS
-      const v = String(raw).toLowerCase();
-      const isFs = (v === "1" || v === "true" || v === "yes");
+      const isFs = !!tg?.isFullscreen;
+      const insetTop = Math.max(0, Number(tg?.contentSafeAreaInset?.top || 0));
       const root = document.documentElement;
       root.classList.toggle("tg-fullscreen", isFs);
       root.classList.toggle("tg-fullsize", !isFs);
-    }catch(_){}
-  })();
+      root.style.setProperty("--safe-top", `${insetTop}px`);
+      // Margin for chips: a bit lower in fullscreen, top-aligned in fullsize
+      if(isFs){
+        root.style.setProperty("--chips-top", `calc(var(--safe-top) + 16px)`);
+      } else {
+        root.style.setProperty("--chips-top", `0px`);
+      }
+    }catch(e){ /* noop */ }
+  }
+  
   const SUPPORTS_TG_HAPTICS = !!tg?.HapticFeedback && (PLATFORM === "ios" || PLATFORM === "android");
   function primeHapticsOnce(){ try{ tg?.HapticFeedback?.impactOccurred?.("light"); }catch{} if(!SUPPORTS_TG_HAPTICS && "vibrate" in navigator) navigator.vibrate(8); }
   document.addEventListener("touchstart", primeHapticsOnce, { once:true, passive:true });

@@ -8,6 +8,10 @@
   --border:#2d3445; --marker:#3390ec; --radius:16px;
   --footer-h:96px;
   --tabbar-offset:64px; /* фактическая высота таббара (меряем в JS) */
+  /* runtime-adjusted by JS */
+  --safe-top: 0px;
+  --chips-top: 0px; /* default: very top */
+  --profile-pad-top: 0px; /* default top padding for profile container */
 }
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -305,7 +309,7 @@ body{
 /* ---------- Profile (scoped to #tab-profile) ---------- */
 /* Make profile tab a normal page flow similar to upgrade */
 #tab-profile.container {
-  padding: calc(8px + env(safe-area-inset-top)) 16px calc(16px + var(--tabbar-offset));
+  padding: var(--profile-pad-top, 0px) 16px calc(16px + var(--tabbar-offset));
   text-align: initial;
 }
 #tab-profile.container.is-active { display:block; }
@@ -319,7 +323,7 @@ body{
 /* Chips row */
 #tab-profile .profile-chips{
   display:flex; align-items:center; gap:10px;
-  margin-top: 3px;
+  margin-top: var(--chips-top, 3px);
   flex-wrap: nowrap;
   overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:2px;
   scrollbar-width: none; /* Firefox */
@@ -387,7 +391,7 @@ body{
     }
 
   /* Profile mobile tweaks */
-  #tab-profile .profile-chips{ gap:8px; margin-top: 3px; }
+  #tab-profile .profile-chips{ gap:8px; }
   #tab-profile .chip{ padding:6px 10px; font-size:13px }
   #tab-profile .chip-balance .val{ font-size:14px }
   #tab-profile .profile-avatar img, #tab-profile .profile-avatar .avatar-ico{ width:132px; height:132px }
@@ -401,27 +405,22 @@ body{
 
 /* ---------- Desktop tweaks for Profile ---------- */
 @media (min-width: 601px){
-  /* reduce top whitespace on desktop */
-  #tab-profile.container{ padding-top: 12px; }
+  /* reduce top whitespace on desktop handled via --profile-pad-top */
 
   /* center chips and tighten top spacing */
   #tab-profile .profile-chips{
     justify-content: center;
     flex-wrap: wrap;
     overflow: visible;
-    margin-top: 3 px;
     gap: 12px;
   }
   #tab-profile .chip-balance{ margin-left: 0; }
   #tab-profile .profile-root{ max-width: 860px; }
-  
-  /* avatar and name spacing */
-  #tab-profile .profile-avatar{ margin-top: 12px; }
+  #tab-profile .profile-avatar{ margin-top: 0; }
   #tab-profile .profile-avatar img, #tab-profile .profile-avatar .avatar-ico{ width: 180px; height: 180px; }
   #tab-profile .profile-name{ margin-top: 8px; font-size: 32px; }
 
   /* center actions */
-  #tab-profile .profile-actions{ max-width: 560px; margin: 12px auto 6px; gap: 14px; }
   #tab-profile .btn{ padding: 14px 18px; font-size: 18px; }
 
   /* inventory proportions */
