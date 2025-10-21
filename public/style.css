@@ -64,10 +64,8 @@ body{
 
 /* --- Ряд над рулеткой --- */
 .header-row{ display:flex; align-items:center; justify-content:space-between; gap:12px;
-/*margin-top:var(--chips-top, 3px)*/
-margin:var(--chips-top, 8px) 2px 20px;
-
- }
+  margin:var(--header-row-mt, 8px) 2px 20px;
+}
 /* Force no top gap in fullsize mode */
 html.tg-fullsize .slider-content .header-row{ margin-top: 0 !important; }
 html.tg-fullsize .slider-content{ padding-top: 0 !important; }

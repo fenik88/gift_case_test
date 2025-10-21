@@ -113,23 +113,23 @@ function syncTabbar(){
       if(isFs){
         // Use container padding to clear Telegram header on devices that report a top inset (mobile)
         const HEADER_APPROX = 56; // px; Telegram header pill area height
-        const padTop = insetTop > 0 ? insetTop + HEADER_APPROX : 0; // desktop usually has 0 inset
+        const isMobile = (PLATFORM === "ios" || PLATFORM === "android");
+        const padTop = isMobile ? insetTop + HEADER_APPROX : 0; // desktop usually has 0 inset
         root.style.setProperty("--profile-pad-top", `${padTop}px`);
         // Chips should sit a bit below the start of content in fullscreen
         root.style.setProperty("--chips-top", `12px`);
-        // Header row should sit just below safe area in fullscreen
-        root.style.setProperty("--header-row-mt", `${(insetTop > 0 ? insetTop : 0) + 8}px`);
+        // Header row should sit below Telegram header in fullscreen (safe area + pills)
+        const headerRowMtFs = isMobile ? (insetTop + HEADER_APPROX) : 16;
+        root.style.setProperty("--header-row-mt", `${headerRowMtFs}px`);
         // Roulette overlay should hug the top in fullscreen
                 root.style.setProperty("--slider-top", `0px`);
-        // Keep some internal top padding in fullscreen
-        root.style.setProperty("--slider-pad-top", `16px`);
+        // No internal top padding; spacing controlled by header row
+        root.style.setProperty("--slider-pad-top", `0px`);
       } else {
         root.style.setProperty("--chips-top", `0px`);
         root.style.setProperty("--profile-pad-top", `0px`);
-        // In fullsize add a visible gap below Telegram header for the header row
-        const HEADER_APPROX = 56; // px
-        const headerRowMt = (insetTop > 0 ? insetTop : 0) + HEADER_APPROX;
-        root.style.setProperty("--header-row-mt", `${headerRowMt}px`);
+        // In fullsize eliminate top gap
+        root.style.setProperty("--header-row-mt", `0px`);
         // Slider content stays flush to top; spacing comes from header row margin
         root.style.setProperty("--slider-top", `0px`);
         // Remove internal top padding in fullsize
