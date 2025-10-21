@@ -390,7 +390,7 @@ html.tg-fullsize .slider-content{ padding-top: 0 !important; }
   .up-left,.up-right{ width:100% }
   .up-center{ order:-1 }
 
-  .header-row{ margin-top: clamp(28px, 14vh, 120px); margin-bottom: 20px; }
+ /* .header-row{ margin-top: clamp(28px, 14vh, 120px); margin-bottom: 20px; }*/
   .roulette-container{ height:172px; margin: 0 0 14px; }
   .roulette-item{ min-width:136px; height:136px }
   .roulette-item img{ width:104px; height:104px }
