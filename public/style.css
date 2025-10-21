@@ -62,7 +62,11 @@ body{
 }
 
 /* --- Ряд над рулеткой --- */
-.header-row{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin:var(--header-row-mt, 8px) 2px 20px; }
+.header-row{ display:flex; align-items:center; justify-content:space-between; gap:12px;
+/*margin-top:var(--chips-top, 3px)*/
+margin:var(--chips-top, 8px) 2px 20px;
+
+ }
 .title{ margin:0 }
 .close{
   position:static; display:inline-flex; align-items:center; justify-content:center;
