@@ -393,8 +393,8 @@ body{
 
   /* Profile mobile tweaks */
   #tab-profile .profile-chips{ gap:8px; }
-  /* In fullscreen on mobile, push chips below Telegram header using safe area + header height */
-  html.tg-fullscreen #tab-profile .profile-chips{ margin-top: calc(var(--safe-top) + var(--header-offset, 56px)); }
+  /* In fullscreen on mobile, use unified variable-driven offset */
+  html.tg-fullscreen #tab-profile .profile-chips{ margin-top: var(--chips-top); }
   #tab-profile .chip{ padding:6px 10px; font-size:13px }
   #tab-profile .chip-balance .val{ font-size:14px }
   #tab-profile .profile-avatar img, #tab-profile .profile-avatar .avatar-ico{ width:132px; height:132px }

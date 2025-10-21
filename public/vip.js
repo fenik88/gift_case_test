@@ -111,10 +111,12 @@ function syncTabbar(){
       root.style.setProperty("--safe-top", `${insetTop}px`);
       // Margin for chips: a bit lower in fullscreen, top-aligned in fullsize
       if(isFs){
-        root.style.setProperty("--chips-top", `calc(var(--safe-top) + 16px)`);
-        // also pad the profile container so all content starts below header
-        const HEADER_APPROX = 56; // px; Telegram header pill area
-        root.style.setProperty("--profile-pad-top", `${insetTop + HEADER_APPROX}px`);
+        // Use container padding to clear Telegram header on devices that report a top inset (mobile)
+        const HEADER_APPROX = 56; // px; Telegram header pill area height
+        const padTop = insetTop > 0 ? insetTop + HEADER_APPROX : 0; // desktop usually has 0 inset
+        root.style.setProperty("--profile-pad-top", `${padTop}px`);
+        // Chips should sit a bit below the start of content in fullscreen
+        root.style.setProperty("--chips-top", `12px`);
       } else {
         root.style.setProperty("--chips-top", `0px`);
         root.style.setProperty("--profile-pad-top", `0px`);
