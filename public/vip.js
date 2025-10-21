@@ -117,9 +117,15 @@ function syncTabbar(){
         root.style.setProperty("--profile-pad-top", `${padTop}px`);
         // Chips should sit a bit below the start of content in fullscreen
         root.style.setProperty("--chips-top", `12px`);
+        // Roulette overlay should hug the top in fullscreen
+                root.style.setProperty("--slider-top", `0px`);
       } else {
         root.style.setProperty("--chips-top", `0px`);
         root.style.setProperty("--profile-pad-top", `0px`);
+        // In fullsize keep a visible gap below Telegram header
+                const HEADER_APPROX = 56; // px
+                const sliderTop = (insetTop > 0 ? insetTop : 0) + HEADER_APPROX;
+                root.style.setProperty("--slider-top", `${sliderTop}px`);
       }
     }catch(e){ /* noop */ }
   }
