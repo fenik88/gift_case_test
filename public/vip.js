@@ -112,8 +112,12 @@ function syncTabbar(){
       // Margin for chips: a bit lower in fullscreen, top-aligned in fullsize
       if(isFs){
         root.style.setProperty("--chips-top", `calc(var(--safe-top) + 16px)`);
+        // also pad the profile container so all content starts below header
+        const HEADER_APPROX = 56; // px; Telegram header pill area
+        root.style.setProperty("--profile-pad-top", `${insetTop + HEADER_APPROX}px`);
       } else {
         root.style.setProperty("--chips-top", `0px`);
+        root.style.setProperty("--profile-pad-top", `0px`);
       }
     }catch(e){ /* noop */ }
   }
