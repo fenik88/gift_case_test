@@ -121,6 +121,8 @@ function syncTabbar(){
         root.style.setProperty("--header-row-mt", `${(insetTop > 0 ? insetTop : 0) + 8}px`);
         // Roulette overlay should hug the top in fullscreen
                 root.style.setProperty("--slider-top", `0px`);
+        // Keep some internal top padding in fullscreen
+        root.style.setProperty("--slider-pad-top", `16px`);
       } else {
         root.style.setProperty("--chips-top", `0px`);
         root.style.setProperty("--profile-pad-top", `0px`);
@@ -130,6 +132,8 @@ function syncTabbar(){
         root.style.setProperty("--header-row-mt", `${headerRowMt}px`);
         // Slider content stays flush to top; spacing comes from header row margin
         root.style.setProperty("--slider-top", `0px`);
+        // Remove internal top padding in fullsize
+        root.style.setProperty("--slider-pad-top", `0px`);
       }
     }catch(e){ /* noop */ }
   }

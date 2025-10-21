@@ -15,6 +15,7 @@
   --header-offset: 56px; /* approximate Telegram header pill height */
   --slider-top: 0px; /* top offset for roulette overlay in fullsize */
   --header-row-mt: 8px; /* adaptive top margin for slider header row */
+  --slider-pad-top: 0px; /* adaptive top padding for slider content */
 }
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -58,7 +59,7 @@ body{
   border-top:1px solid var(--border);
   border-top-left-radius:24px; border-top-right-radius:24px;
   overflow:auto; -webkit-overflow-scrolling:touch;
-  padding:16px 16px calc(var(--footer-h) + 16px);
+  padding: var(--slider-pad-top, 0px) 16px calc(var(--footer-h) + 16px);
 }
 
 /* --- Ряд над рулеткой --- */
@@ -67,6 +68,9 @@ body{
 margin:var(--chips-top, 8px) 2px 20px;
 
  }
+/* Force no top gap in fullsize mode */
+html.tg-fullsize .slider-content .header-row{ margin-top: 0 !important; }
+html.tg-fullsize .slider-content{ padding-top: 0 !important; }
 .title{ margin:0 }
 .close{
   position:static; display:inline-flex; align-items:center; justify-content:center;
