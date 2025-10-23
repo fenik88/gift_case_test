@@ -71,11 +71,11 @@ function syncTabbar(){
   });
   if (window.Telegram?.WebApp?.onEvent) {
     window.Telegram.WebApp.onEvent("viewportChanged", () => {
-      requestAnimationFrame(() => { syncTabbar(); applyFullscreenRuntime(); });
+      requestAnimationFrame(() => { ensureFullscreen(); syncTabbar(); applyFullscreenRuntime(); });
     });
   }
   pickInitialTab();
-  requestAnimationFrame(() => { syncTabbar(); applyFullscreenRuntime(); });
+  requestAnimationFrame(() => { ensureFullscreen(); syncTabbar(); applyFullscreenRuntime(); });
   window.addEventListener("resize", applyFullscreenRuntime);
 
   // ====== Текущая логика рулетки ======
@@ -99,6 +99,18 @@ function syncTabbar(){
   // Telegram + haptics
   const tg = window.Telegram?.WebApp; tg?.ready?.(); tg?.expand?.();
   const PLATFORM = tg?.platform || "web";
+  const WANT_FULLSCREEN = true; // try to force fullscreen when possible (e.g., side menu opens as fullsize)
+
+  // Try to switch to fullscreen politely, with a couple of retries for slow clients
+  function ensureFullscreen(){
+    if(!WANT_FULLSCREEN || !tg) return;
+    try{
+      if (tg.isFullscreen) return;
+      tg.requestFullscreen?.();
+      setTimeout(()=>{ if(!tg.isFullscreen) tg.requestFullscreen?.(); }, 400);
+      setTimeout(()=>{ if(!tg.isFullscreen) tg.expand?.(); }, 1200);
+    }catch(_){/*noop*/}
+  }
   
   // Runtime fullscreen detection using Telegram.WebApp flags and safe-area insets
   function applyFullscreenRuntime(){
