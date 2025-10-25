@@ -257,14 +257,11 @@ html.tg-fullsize .slider-content{ padding-top: 0 !important; }
 .up-action:disabled{ opacity:.6; cursor:not-allowed }
 .up-status{ min-height:22px; margin-top:10px; color:var(--text-dim); text-align:center }
 
-/* Грид с карточками слева/справа */
+/* Грид с карточками слева/справа (в одну линию на всех ширинах) */
 .up-cards{
   display:grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: 1fr 1fr;
   gap:16px;
-}
-@media (min-width: 601px){
-  .up-cards{ grid-template-columns: 1fr 1fr; }
 }
 
 /* ---------------------- Левая/правая карточки ---------------------- */
@@ -284,6 +281,25 @@ html.tg-fullsize .slider-content{ padding-top: 0 !important; }
 .up-col-title .ico{ display:inline-flex; align-items:center; }
 .up-col-title .ico svg{ width:18px; height:18px; color: var(--text-dim); }
 .up-col-title .lbl{ font-weight:700; }
+
+/* Плюс-добаление в левой карточке */
+.up-add-wrap{
+  display:grid; place-items:center;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:14px;
+  height:220px;
+}
+.up-add-btn{
+  appearance:none; border:1px solid rgba(51,144,236,.5);
+  background: rgba(51,144,236,.12);
+  color: var(--accent);
+  width:64px; height:64px; border-radius:14px;
+  font-size:36px; font-weight:900; line-height:1;
+  display:grid; place-items:center; cursor:pointer;
+  transition: transform .06s, background .12s, border-color .12s;
+}
+.up-add-btn:active{ transform: translateY(1px); }
 
 /* Список предметов слева */
 .up-list{

@@ -177,6 +177,8 @@ function syncTabbar(){
 
   // Const/state
   const STATIC_PATH="/static_webp/", LOOP_COUNT=24, CYCLES_BEFORE_STOP=6;
+  // User-picked gifts for Upgrade (left card)
+  const userGifts = [];
   const gifts=[{name:"Plush Pepe",file:"plush_pepe.webp"},{name:"Heart Locket",file:"heart_locket.webp"},{name:"Durov's Cap",file:"cap.webp"},{name:"Peach",file:"peach.webp"},{name:"Heroic Helmet",file:"helmet.webp"},{name:"Perfume",file:"perfume.webp"},{name:"Venom",file:"venom.webp"},{name:"Bonded Ring",file:"bonded_ring.webp"},{name:"Scared Cat",file:"cat.webp"},{name:"Signet Ring",file:"signet_ring.webp"}];
   let isSpinning=false, lastCenteredIndex=null;
   let idleRAF=null, idleLastTs=0, idleOffset=0; const IDLE_SPEED=22;
@@ -362,6 +364,7 @@ function syncTabbar(){
 
  // ===== Upgrade (wheel with pointer) =====
   const upList = document.getElementById("upList");
+  const upAddBtn = document.getElementById("upAddBtn");
   const upSvg = document.getElementById("upSvg");
   const upArc = document.getElementById("upArc");
   const upPointer = document.getElementById("upPointer");
@@ -383,7 +386,9 @@ function syncTabbar(){
   function buildUpList(){
     if(!upList) return;
     upList.innerHTML = "";
-    gifts.forEach((g, i) => {
+    if(userGifts.length === 0){ upList.style.display = "none"; return; }
+    upList.style.display = "grid";
+    userGifts.forEach((g, i) => {
       const d = document.createElement("div");
       d.className = "up-item" + (i===upSelectedGift ? " is-selected" : "");
       const im = document.createElement("img");
@@ -452,7 +457,7 @@ function syncTabbar(){
 
   // предпросмотр «что получим»
   function updatePreview(){
-    const base = gifts[upSelectedGift];
+    const base = (userGifts.length>0 && upSelectedGift<userGifts.length) ? userGifts[upSelectedGift] : gifts[upSelectedGift];
     // просто выберем «таргет» визуально: тот же предмет, но множитель меняется
     if (upTargetImg){ upTargetImg.src = STATIC_PATH + base.file; upTargetImg.alt = base.name; }
     if (upTargetName) upTargetName.textContent = base.name;
@@ -571,6 +576,17 @@ function syncTabbar(){
     upAction?.addEventListener("touchstart", () => H.impact("medium"), { passive:true });
   }
   initUpgrade();
+
+  // Add-gift button behavior: for now, add a random gift from the catalog
+  upAddBtn?.addEventListener("click", () => {
+    H.impact("medium");
+    const pick = gifts[Math.floor(Math.random()*gifts.length)];
+    userGifts.push(pick);
+    upSelectedGift = userGifts.length - 1;
+    buildUpList();
+    renderUpListSelection();
+    updatePreview();
+  });
 
 
   // Init
