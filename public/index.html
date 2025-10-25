@@ -19,13 +19,7 @@
 <!-- TAB: Апгрейд -->
 <div class="container tab" id="tab-upgrade" aria-hidden="true">
     <div class="upgrade-root">
-        <!-- левая колонка: выбор предмета -->
-        <div class="up-left">
-            <div class="up-col-title">Ваш предмет</div>
-            <div class="up-list" id="upList"></div>
-        </div>
-
-        <!-- центр: колесо + мультипликаторы + кнопка -->
+        <!-- центр: колесо + мультипликаторы + кнопка (герой секция) -->
         <div class="up-center">
             <div class="up-wheel" id="upWheel">
                 <!-- 300x300 viewBox — рисуем кольцо и сектор успеха, курсор крутится -->
@@ -56,22 +50,31 @@
             <div class="up-chance-row">Шанс: <span id="upChance">—</span></div>
 
             <!-- кнопка действия -->
-            <button class="up-action" id="upAction">Апгрейд</button>
+            <button class="up-action" id="upAction">Upgrade</button>
 
             <!-- мини-статус -->
             <div class="up-status" id="upStatus" aria-live="polite"></div>
         </div>
 
-        <!-- правая колонка: что получим -->
-        <div class="up-right">
-            <div class="up-col-title">Получите при успехе</div>
+        <!-- карточки: Ваши подарки + Улучшаемый подарок -->
+        <div class="up-cards">
+          <!-- левая карточка: выбор предмета -->
+          <div class="up-left">
+            <div class="up-col-title"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="icons.svg#case" xlink:href="icons.svg#case"/></svg></span><span class="lbl">Your gifts</span></div>
+            <div class="up-list" id="upList"></div>
+          </div>
+
+          <!-- правая карточка: что получим -->
+          <div class="up-right">
+            <div class="up-col-title"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="icons.svg#upgrade" xlink:href="icons.svg#upgrade"/></svg></span><span class="lbl">Upgraded gift</span></div>
             <div class="up-preview" id="upPreview">
-                <div class="up-target-card">
-                    <div class="up-target-img-wrap"><img id="upTargetImg" alt=""></div>
-                    <div class="up-target-name" id="upTargetName">—</div>
-                    <div class="up-target-mult" id="upTargetMult">x—</div>
-                </div>
+              <div class="up-target-card">
+                <div class="up-target-img-wrap"><img id="upTargetImg" alt=""></div>
+                <div class="up-target-name" id="upTargetName">—</div>
+                <div class="up-target-mult" id="upTargetMult">x—</div>
+              </div>
             </div>
+          </div>
         </div>
     </div>
 </div>
