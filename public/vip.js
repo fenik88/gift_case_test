@@ -147,14 +147,9 @@ function syncTabbar(){
         // Remove internal top padding in fullsize
         root.style.setProperty("--slider-pad-top", `0px`);
       }
-      // Adjust roulette wheel size
-        if (isFs){
-          root.style.setProperty("--wheel-size", "clamp(220px, 68vw, 420px)");
-        } else {
-            root.style.setProperty("--wheel-size", "clamp(220px, 3vw, 420px");
-        }
-
-      }
+      // Adjust roulette wheel size via CSS variable consumed by .up-wheel { width/height: var(--wheel-size) }
+      const wheelSize = isFs ? "clamp(220px, 68vw, 420px)" : "clamp(170px, 34vw, 300px)";
+      root.style.setProperty("--wheel-size", wheelSize);
     }catch(e){ /* noop */ }
   }
   
