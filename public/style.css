@@ -344,6 +344,11 @@ html.tg-fullscreen .upgrade-root{ min-height: calc(100svh - var(--tabbar-offset)
 html.tg-fullscreen .up-wheel{ --wheel-size: clamp(150px, 52vw, 230px); margin-top: 4px; }
 html.tg-fullscreen .up-cards{ height:auto; }
 
+/* Fullsize (non-fullscreen): use base paddings and proportions */
+html.tg-fullsize #tab-upgrade.container{ padding-top: 0; }
+html.tg-fullsize .upgrade-root{ min-height: calc(100svh - var(--tabbar-offset)); }
+html.tg-fullsize .up-wheel{ --wheel-size: clamp(160px, 42vw, 280px); margin-top: 6px; }
+
 /* Список предметов слева */
 .up-list{
   display:grid;
