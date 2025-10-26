@@ -54,36 +54,37 @@
 
             <!-- мини-статус -->
             <div class="up-status" id="upStatus" aria-live="polite"></div>
+        </div>
 
+        <!-- карточки: Ваши подарки + Улучшаемый подарок -->
         <div class="up-cards">
-          <!-- левая карточка: выбор предмета -->
-          <div class="up-left">
-            <div class="up-col-title"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="icons.svg#case" xlink:href="icons.svg#case"/></svg></span><span class="lbl">Your gifts</span></div>
-            <div class="up-add-wrap" id="upLeftAddWrap">
-              <button class="up-add-btn" id="upAddBtn" type="button" aria-label="Add gift">+</button>
+            <!-- левая карточка: выбор предмета -->
+            <div class="up-left">
+                <div class="up-col-title"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="icons.svg#case" xlink:href="icons.svg#case"/></svg></span><span class="lbl">Your gifts</span></div>
+                <div class="up-add-wrap">
+                    <button class="up-add-btn" id="upAddBtn" type="button" aria-label="Add gift">+</button>
+                </div>
+                <div class="up-list" id="upList" style="display:none"></div>
             </div>
-            <div class="up-list" id="upList" style="display:none"></div>
-          </div>
 
-          <!-- правая карточка: что получим -->
-          <div class="up-right">
-            <div class="up-col-title"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="icons.svg#upgrade" xlink:href="icons.svg#upgrade"/></svg></span><span class="lbl">Upgraded gift</span></div>
-            <div class="up-add-wrap" id="upRightAddWrap">
-              <img class="up-add-img" id="upAddTargetImg" src="/static_webp/plush_pepe.webp" alt="Choose upgraded gift" role="button" tabindex="0" />
+            <!-- правая карточка: что получим -->
+            <div class="up-right">
+                <div class="up-col-title"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="icons.svg#upgrade" xlink:href="icons.svg#upgrade"/></svg></span><span class="lbl">Upgraded gift</span></div>
+                <div class="up-preview" id="upPreview">
+                    <div class="up-target-card">
+                        <div class="up-target-img-wrap"><img id="upTargetImg" alt=""></div>
+                        <div class="up-target-name" id="upTargetName">—</div>
+                        <div class="up-target-mult" id="upTargetMult">x—</div>
+                    </div>
+                </div>
             </div>
-            <div class="up-preview" id="upPreview">
-              <div class="up-target-card">
-                <div class="up-target-name" id="upTargetName">—</div>
-                <div class="up-target-mult" id="upTargetMult">x—</div>
-              </div>
-            </div>
-          </div>
         </div>
     </div>
 </div>
 
 <!-- TAB: Профиль -->
 <div class="container tab" id="tab-profile" aria-hidden="true">
+    <div class="profile-root">
         <div class="profile-chips">
             <div class="chip chip-compact" title="Регион">🇷🇺</div>
             <div class="chip chip-compact" title="Устройство">📱</div>
