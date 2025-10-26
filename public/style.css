@@ -200,7 +200,7 @@ html.tg-fullsize .slider-content{ padding-top: 0 !important; }
 
 /* Колесо: адаптивный размер, без растягивания */
 .up-wheel{
-  --wheel-size: clamp(220px, 56vw, 420px);
+  --wheel-size: clamp(200px, 42vw, 340px);
   width: var(--wheel-size);
   height: var(--wheel-size);
   margin-top: clamp(6px, 6vh, 40px);
