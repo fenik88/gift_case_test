@@ -303,6 +303,7 @@ html.tg-fullsize .slider-content{ padding-top: 0 !important; }
   background:var(--panel);
   border:1px solid var(--border);
   border-radius:14px;
+  max-height: clamp(80px, 18svh, 90px);
 }
 .up-add-btn{
   appearance:none; border:1px solid rgba(51,144,236,.5);
@@ -331,7 +332,7 @@ html.tg-fullsize .slider-content{ padding-top: 0 !important; }
 /* Height-tuned layout for short screens */
 @media (max-height: 740px){
   .up-wheel{ --wheel-size: clamp(140px, 36svh, 220px); margin-top: clamp(2px, 2svh, 20px); }
-  .up-add-wrap{ height: clamp(80px, 18svh, 90px); }
+  .up-add-wrap{ height: clamp(100px, 18svh, 140px); }
   .up-target-card{ max-width: 200px; height: clamp(100px, 18svh, 140px) }
   .up-mult-btn{ padding:6px 10px; }
   .up-action{ padding:10px 16px; font-size:15px; }
