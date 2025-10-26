@@ -289,13 +289,13 @@ html.tg-fullsize .slider-content{ padding-top: 0 !important; }
 .up-col-title .lbl{ font-weight:700; }
 
 /* Ensure right preview fills available card height without overflow */
-.up-right{ overflow:hidden; }
+.up-right{ overflow:visible; }
 .up-right .up-preview{ flex:1; display:grid; place-items:center; min-height:0; }
 .up-target-card{ max-width: 220px; max-height: 100%; }
 /* Override sizes inside right card so content scales to fit its max-height */
-.up-right .up-target-card{ max-height: clamp(80px, 18svh, 90px); max-width:100%; margin:0; padding:8px; display:grid; grid-template-rows: minmax(0,1fr) auto auto; }
-.up-right .up-target-img-wrap{ min-height:0; display:grid; place-items:center; }
-.up-right .up-target-img-wrap img{ max-width:100%; max-height:100%; width:auto; height:auto; object-fit:contain; }
+.up-right .up-target-card{ max-height: clamp(80px, 18svh, 90px); max-width:100%; margin:0; padding:8px; display:grid; grid-template-rows: minmax(0,1fr) auto auto; overflow:visible; }
+.up-right .up-target-img-wrap{ min-height:0; height:100%; display:grid; place-items:center; aspect-ratio:auto; overflow:visible; }
+.up-right .up-target-img-wrap img{ max-width:100%; max-height:100%; width:50%; height:auto; object-fit:contain; }
 
 /* Плюс-добаление в левой карточке */
 .up-add-wrap{
