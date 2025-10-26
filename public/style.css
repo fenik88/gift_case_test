@@ -343,7 +343,7 @@ html.tg-fullsize .slider-content{ padding-top: 0 !important; }
 /* ---------- Telegram fullscreen tuning (mobile) ---------- */
 html.tg-fullscreen #tab-upgrade.container{ padding-top: var(--profile-pad-top, 0px); }
 html.tg-fullscreen .upgrade-root{ min-height: calc(100svh - var(--tabbar-offset) - var(--profile-pad-top, 0px)); }
-html.tg-fullscreen .up-wheel{ --wheel-size: clamp(220px, 68vw, 420px); margin-top: 15px; }
+html.tg-fullscreen .up-wheel{ --wheel-size: clamp(220px, 68vw, 300px); margin-top: 15px; }
 html.tg-fullscreen .up-cards{ height:auto; }
 
 /* Ensure equal tile heights in fullscreen (left add-wrap = right target card) */
