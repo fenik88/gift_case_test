@@ -195,6 +195,7 @@ html.tg-fullsize .slider-content{ padding-top: 0 !important; }
   flex-direction:column;
   align-items:center;
   gap:12px;               /* расстояние между колесом/мультипликаторами/кнопкой */
+  margin-top: var(--chips-top, 3px);
 }
 
 /* Колесо: адаптивный размер, без растягивания */
