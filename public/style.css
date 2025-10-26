@@ -169,7 +169,7 @@ html.tg-fullsize .slider-content{ padding-top: 0 !important; }
 
 /* Вкладка апгрейда ведёт себя как обычная страница (а не grid-центр из .container) */
 #tab-upgrade.container {
-  padding: 0 16px calc(16px + var(--tabbar-offset));
+  padding: var(--profile-pad-top, 0px) 16px calc(16px + var(--tabbar-offset));
   text-align: initial;
   overflow: hidden; /* avoid page scroll on upgrade tab */
 }
