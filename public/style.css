@@ -245,10 +245,10 @@ html.tg-fullsize .slider-content{ padding-top: 0 !important; }
 }
 
 .up-action{
-  min-width:180px;
+  min-width:220px;
   border-radius:999px;
-  padding:12px 18px;
-  font-size:16px; font-weight:700;
+  padding:14px 22px;
+  font-size:18px; font-weight:700;
   color:#fff;
   background:var(--accent);
   border:1px solid rgba(255,255,255,.18);
@@ -336,7 +336,7 @@ html.tg-fullsize .slider-content{ padding-top: 0 !important; }
   .up-add-wrap{ height: clamp(100px, 18svh, 140px); }
   .up-target-card{ max-width: 200px; height: clamp(100px, 18svh, 140px) }
   .up-mult-btn{ padding:6px 10px; }
-  .up-action{ padding:10px 16px; font-size:15px; }
+  .up-action{ padding:12px 20px; font-size:17px; min-width:200px; }
 }
 
 /* ---------- Telegram fullscreen tuning (mobile) ---------- */
