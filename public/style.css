@@ -340,8 +340,8 @@ html.tg-fullsize .slider-content{ padding-top: 0 !important; }
 }
 
 /* ---------- Telegram fullscreen tuning (mobile) ---------- */
-html.tg-fullscreen #tab-upgrade.container{ padding-top: var(--safe-top, 0px); }
-html.tg-fullscreen .upgrade-root{ min-height: calc(100svh - var(--tabbar-offset) - var(--safe-top, 0px)); }
+html.tg-fullscreen #tab-upgrade.container{ padding-top: var(--profile-pad-top, 0px); }
+html.tg-fullscreen .upgrade-root{ min-height: calc(100svh - var(--tabbar-offset) - var(--profile-pad-top, 0px)); }
 html.tg-fullscreen .up-wheel{ --wheel-size: clamp(150px, 52vw, 230px); margin-top: 4px; }
 html.tg-fullscreen .up-cards{ height:auto; }
 
