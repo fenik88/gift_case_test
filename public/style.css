@@ -468,6 +468,8 @@ html.tg-fullsize .up-wheel{ --wheel-size: clamp(160px, 42vw, 280px); margin-top:
   .up-left,.up-right{ width:100% }
   .up-center{ order:-1 }
 
+    html.tg-fullscreen #tab-upgrade .up-center{ margin-top: var(--chips-top); }
+
  /* .header-row{ margin-top: clamp(28px, 14vh, 120px); margin-bottom: 20px; }*/
   .roulette-container{ height:172px; margin: 0 0 14px; }
   .roulette-item{ min-width:136px; height:136px }
