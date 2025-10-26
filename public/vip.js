@@ -375,6 +375,8 @@ function syncTabbar(){
   const upTargetImg = document.getElementById("upTargetImg");
   const upTargetName = document.getElementById("upTargetName");
   const upTargetMult = document.getElementById("upTargetMult");
+  const upRightAddWrap = document.getElementById("upRightAddWrap");
+  const upAddTargetImg = document.getElementById("upAddTargetImg");
 
   const MULTS = [1.25, 1.5, 2, 3, 5, 10];
   let upSelectedGift = 0;      // индекс слева
@@ -574,6 +576,12 @@ function syncTabbar(){
     upAction?.addEventListener("click", runUpgrade);
     upAction?.addEventListener("pointerdown", () => H.impact("medium"));
     upAction?.addEventListener("touchstart", () => H.impact("medium"), { passive:true });
+
+    // Start with right add-wrap visible, preview hidden
+    if (upRightAddWrap && upPreview) {
+      upRightAddWrap.style.display = "grid";
+      upPreview.style.display = "none";
+    }
   }
   initUpgrade();
 
@@ -586,6 +594,19 @@ function syncTabbar(){
     buildUpList();
     renderUpListSelection();
     updatePreview();
+  });
+
+  // Right image toggles to show preview (target) and hide add-wrap
+  function showRightPreview(){
+    H.impact("medium");
+    if (upRightAddWrap && upPreview) {
+      upRightAddWrap.style.display = "none";
+      upPreview.style.display = "grid";
+    }
+  }
+  upAddTargetImg?.addEventListener("click", showRightPreview);
+  upAddTargetImg?.addEventListener("keydown", (e)=>{
+    if(e.key === "Enter" || e.key === " ") showRightPreview();
   });
 
 

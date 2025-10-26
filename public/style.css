@@ -171,6 +171,7 @@ html.tg-fullsize .slider-content{ padding-top: 0 !important; }
 #tab-upgrade.container {
   padding: 0 16px calc(16px + var(--tabbar-offset));
   text-align: initial;
+  overflow: hidden; /* avoid page scroll on upgrade tab */
 }
 /* Делать видимой вкладку апгрейда только когда она активна, и использовать блочную раскладку */
 #tab-upgrade.container.is-active {
@@ -179,12 +180,13 @@ html.tg-fullsize .slider-content{ padding-top: 0 !important; }
 
 /* Корневой блок апгрейда — всегда одна колонка по центру */
 .upgrade-root{
-  display:flex;
-  flex-direction:column;
-  gap:16px;
+  display:grid;
+  grid-template-rows: auto 1fr; /* hero + cards area fills rest */
+  gap:12px;
   width:100%;
   max-width: 760px;      /* комфортная ширина в мини-апп */
   margin: 0 auto;
+  min-height: calc(100svh - var(--tabbar-offset));
 }
 
 /* ---------------------- Центр: колесо + управление ---------------------- */
@@ -197,11 +199,11 @@ html.tg-fullsize .slider-content{ padding-top: 0 !important; }
 
 /* Колесо: адаптивный размер, без растягивания */
 .up-wheel{
-  --wheel-size: clamp(240px, 66vw, 340px);
+  --wheel-size: clamp(160px, 42vw, 280px);
   width: var(--wheel-size);
   height: var(--wheel-size);
-  margin-top: clamp(28px, 14vh, 120px);  /* как раньше top */
-  margin-bottom: 12px;                    /* место под мультипликаторы */
+  margin-top: clamp(6px, 6vh, 40px);
+  margin-bottom: 8px;
 }
 
 .up-wheel svg{ width:100%; height:100%; display:block }
@@ -210,7 +212,7 @@ html.tg-fullsize .slider-content{ padding-top: 0 !important; }
 .up-mults{
   display:flex;
   flex-wrap:wrap;
-  gap:8px;
+  gap:6px;
   justify-content:center;
   margin: 0 0 2px;        /* убираем прежний margin-top с var(--wheel-size) */
 }
@@ -235,17 +237,17 @@ html.tg-fullsize .slider-content{ padding-top: 0 !important; }
 
 /* Шанс + кнопка действия */
 .up-chance-row{
-  margin:6px 0 10px;
+  margin:4px 0 6px;
   color:var(--text-dim);
   font-weight:600;
   text-align:center;
 }
 
 .up-action{
-  min-width:220px;
+  min-width:180px;
   border-radius:999px;
-  padding:14px 20px;
-  font-size:18px; font-weight:700;
+  padding:12px 18px;
+  font-size:16px; font-weight:700;
   color:#fff;
   background:var(--accent);
   border:1px solid rgba(255,255,255,.18);
@@ -255,13 +257,15 @@ html.tg-fullsize .slider-content{ padding-top: 0 !important; }
 }
 .up-action:active{ transform:translateY(1px); background:var(--accent-press) }
 .up-action:disabled{ opacity:.6; cursor:not-allowed }
-.up-status{ min-height:22px; margin-top:10px; color:var(--text-dim); text-align:center }
+.up-status{ min-height:0px; margin-top:0px; color:var(--text-dim); text-align:center }
 
 /* Грид с карточками слева/справа (в одну линию на всех ширинах) */
 .up-cards{
   display:grid;
   grid-template-columns: 1fr 1fr;
   gap:16px;
+  height: 30%;
+  align-items: stretch;
 }
 
 /* ---------------------- Левая/правая карточки ---------------------- */
@@ -271,6 +275,8 @@ html.tg-fullsize .slider-content{ padding-top: 0 !important; }
   border-radius:16px;
   padding:12px;
   width:100%;
+  display:flex; flex-direction:column;
+  max-height:150px;
 }
 .up-col-title{
   display:flex; align-items:center; gap:8px;
@@ -282,13 +288,22 @@ html.tg-fullsize .slider-content{ padding-top: 0 !important; }
 .up-col-title .ico svg{ width:18px; height:18px; color: var(--text-dim); }
 .up-col-title .lbl{ font-weight:700; }
 
+/* Ensure right preview fills available card height without overflow */
+.up-right{ overflow:hidden; }
+.up-right .up-preview{ flex:1; display:grid; place-items:center; min-height:0; }
+.up-target-card{ max-width: 220px; max-height: 100%; }
+/* Override sizes inside right card so content scales to fit its max-height */
+.up-right .up-target-card{ max-height: clamp(80px, 24svh, 80px); max-width:100%; margin:0; padding:8px; display:grid; grid-template-rows: minmax(0,1fr) auto auto; }
+.up-right .up-target-img-wrap{ min-height:0; display:grid; place-items:center; }
+.up-right .up-target-img-wrap img{ max-width:100%; max-height:100%; width:auto; height:auto; object-fit:contain; }
+
 /* Плюс-добаление в левой карточке */
 .up-add-wrap{
   display:grid; place-items:center;
   background:var(--panel);
   border:1px solid var(--border);
   border-radius:14px;
-  height:220px;
+  height: clamp(80px, 24svh, 80px);
 }
 .up-add-btn{
   appearance:none; border:1px solid rgba(51,144,236,.5);
@@ -300,6 +315,28 @@ html.tg-fullsize .slider-content{ padding-top: 0 !important; }
   transition: transform .06s, background .12s, border-color .12s;
 }
 .up-add-btn:active{ transform: translateY(1px); }
+
+/* Image variant for add-wrap (used on right card) */
+.up-add-img{
+  width:64px; height:64px; border-radius:14px;
+  border:1px solid rgba(51,144,236,.5);
+  background: rgba(51,144,236,.12);
+  padding:8px; object-fit:contain; box-sizing:border-box;
+  cursor:pointer; display:block;
+}
+
+/* Right card: image inside same wrap as left (dark panel box), but image stays borderless */
+.up-right .up-add-wrap{ background: var(--panel); border: 1px solid var(--border);  }
+.up-right .up-add-img{ background: transparent; border: 0; padding: 0; }
+
+/* Height-tuned layout for short screens */
+@media (max-height: 740px){
+  .up-wheel{ --wheel-size: clamp(140px, 36svh, 220px); margin-top: clamp(2px, 2svh, 20px); }
+  .up-add-wrap{ height: clamp(100px, 18svh, 140px); }
+  .up-target-card{ max-width: 200px; height: clamp(100px, 18svh, 140px) }
+  .up-mult-btn{ padding:6px 10px; }
+  .up-action{ padding:10px 16px; font-size:15px; }
+}
 
 /* Список предметов слева */
 .up-list{
