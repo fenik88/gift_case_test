@@ -153,6 +153,7 @@ function syncTabbar(){
         } else {
             root.style.setProperty("--wheel-size", "clamp(220px, 3vw, 420px");
         }
+
       }
     }catch(e){ /* noop */ }
   }
