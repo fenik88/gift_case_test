@@ -154,7 +154,7 @@ function syncTabbar(){
             root.style.setProperty("--wheel-size", "clamp(220px, 3vw, 420px");
         }
       }
-    }catch(e){ /* noop */ }4
+    }catch(e){ /* noop */ }
   }
   
   const SUPPORTS_TG_HAPTICS = !!tg?.HapticFeedback && (PLATFORM === "ios" || PLATFORM === "android");
