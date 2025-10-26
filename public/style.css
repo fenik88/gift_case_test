@@ -345,6 +345,14 @@ html.tg-fullscreen .upgrade-root{ min-height: calc(100svh - var(--tabbar-offset)
 html.tg-fullscreen .up-wheel{ --wheel-size: clamp(180px, 60vw, 340px); margin-top: 4px; }
 html.tg-fullscreen .up-cards{ height:auto; }
 
+/* Ensure equal tile heights in fullscreen (left add-wrap = right target card) */
+html.tg-fullscreen #tab-upgrade{ --upgrade-tile-h: clamp(80px, 18svh, 90px); }
+html.tg-fullscreen #tab-upgrade .up-left .up-add-wrap,
+html.tg-fullscreen #tab-upgrade .up-right .up-target-card{
+  height: var(--upgrade-tile-h);
+  max-height: var(--upgrade-tile-h);
+}
+
 /* Fullsize (non-fullscreen): use base paddings and proportions */
 html.tg-fullsize #tab-upgrade.container{ padding-top: 0; }
 html.tg-fullsize .upgrade-root{ min-height: calc(100svh - var(--tabbar-offset)); }
