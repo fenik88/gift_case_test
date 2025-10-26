@@ -150,14 +150,11 @@ function syncTabbar(){
       // Adjust roulette wheel size
         if (isFs){
           root.style.setProperty("--wheel-size", "clamp(220px, 68vw, 420px)");
-          wheelEl.style.removeProperty("height");
         } else {
-          const sz = "clamp(220px, 34vw, 420px);";
-          wheelEl.style.width = sz;
-          wheelEl.style.height = sz;
+            root.style.setProperty("--wheel-size", "clamp(220px, 3vw, 420px");
         }
       }
-    }catch(e){ /* noop */ }
+    }catch(e){ /* noop */ }4
   }
   
   const SUPPORTS_TG_HAPTICS = !!tg?.HapticFeedback && (PLATFORM === "ios" || PLATFORM === "android");
