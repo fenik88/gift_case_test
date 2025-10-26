@@ -16,6 +16,7 @@
   --slider-top: 0px; /* top offset for roulette overlay in fullsize */
   --header-row-mt: 8px; /* adaptive top margin for slider header row */
   --slider-pad-top: 0px; /* adaptive top padding for slider content */
+  --wheel-size:0px; /* adaptive wheel size */
 }
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -333,7 +334,7 @@ html.tg-fullsize .slider-content{ padding-top: 0 !important; }
 
 /* Height-tuned layout for short screens */
 @media (max-height: 740px){
-  .up-wheel{ --wheel-size: clamp(180px, 44svh, 300px); margin-top: clamp(2px, 2svh, 20px); }
+  .up-wheel{ var(--wheel-size, 0px); margin-top: clamp(2px, 2svh, 20px); }
   .up-add-wrap{ height: clamp(100px, 18svh, 140px); }
   .up-target-card{ max-width: 200px; height: clamp(100px, 18svh, 140px) }
   .up-mult-btn{ padding:6px 10px; }
@@ -343,7 +344,7 @@ html.tg-fullsize .slider-content{ padding-top: 0 !important; }
 /* ---------- Telegram fullscreen tuning (mobile) ---------- */
 html.tg-fullscreen #tab-upgrade.container{ padding-top: var(--profile-pad-top, 0px); }
 html.tg-fullscreen .upgrade-root{ min-height: calc(100svh - var(--tabbar-offset) - var(--profile-pad-top, 0px)); }
-html.tg-fullscreen .up-wheel{ --wheel-size: clamp(220px, 34vw, 420px); margin-top: 15px; }
+html.tg-fullscreen .up-wheel{ var(--wheel-size, 0px); margin-top: 15px; }
 html.tg-fullscreen .up-cards{ height:auto; }
 
 /* Ensure equal tile heights in fullscreen (left add-wrap = right target card) */
@@ -357,33 +358,6 @@ html.tg-fullscreen #tab-upgrade .up-right .up-target-card{
 /* Fullsize (non-fullscreen): use base paddings and proportions */
 html.tg-fullsize #tab-upgrade.container{ padding-top: 0; }
 html.tg-fullsize .upgrade-root{ min-height: calc(100svh - var(--tabbar-offset)); }
-html.tg-fullsize .up-wheel{
-  --wheel-size: clamp(170px, 68vw, 300px);
-  margin-top: 8px;
-}
-
-/* Also enforce fullsize sizing whenever NOT fullscreen (covers browsers and Telegram fullsize) */
-html:not(.tg-fullscreen) #tab-upgrade .up-wheel{
-  --wheel-size: clamp(170px, 34vw, 300px);
-  width: var(--wheel-size) !important;
-  height: var(--wheel-size) !important;
-}
-
-/* Extra specificity to win over base rules in fullsize */
-html:not(.tg-fullscreen) #tab-upgrade.is-active .up-wheel{
-  width: clamp(170px, 34vw, 300px) !important;
-  height: clamp(170px, 34vw, 300px) !important;
-}
-
-/* ID-based override to guarantee smaller size in fullsize contexts */
-html.tg-fullsize #upWheel{
-  width: clamp(170px, 34vw, 300px) !important;
-  height: clamp(170px, 34vw, 300px) !important;
-}
-html:not(.tg-fullscreen) #upWheel{
-  width: clamp(170px, 34vw, 300px) !important;
-  height: clamp(170px, 34vw, 300px) !important;
-}
 
 /* Список предметов слева */
 .up-list{
