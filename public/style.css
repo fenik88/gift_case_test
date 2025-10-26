@@ -334,7 +334,7 @@ html.tg-fullsize .slider-content{ padding-top: 0 !important; }
 /* Height-tuned layout for short screens */
 @media (max-height: 740px){
   /* On very short screens, scale the wheel down a bit */
-  .up-wheel{ --wheel-size: clamp(180px, 44svh, 300px); margin-top: clamp(2px, 2svh, 20px); }
+  .up-wheel{ var(--wheel-size); margin-top: clamp(2px, 2svh, 20px); }
   .up-add-wrap{ height: clamp(100px, 18svh, 140px); }
   .up-target-card{ max-width: 200px; height: clamp(100px, 18svh, 140px) }
   .up-mult-btn{ padding:6px 10px; }
