@@ -16,6 +16,7 @@
   --slider-top: 0px; /* top offset for roulette overlay in fullsize */
   --header-row-mt: 8px; /* adaptive top margin for slider header row */
   --slider-pad-top: 0px; /* adaptive top padding for slider content */
+  --wheel-size: clamp(200px, 34vw, 340px); /* default wheel size */
 }
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -201,8 +202,8 @@ html.tg-fullsize .slider-content{ padding-top: 0 !important; }
 /* Колесо: адаптивный размер, без растягивания */
 .up-wheel{
   /* Width/height use runtime variable with a safe fallback */
-  width: var(--wheel-size, clamp(200px, 42vw, 340px));
-  height: var(--wheel-size, clamp(200px, 42vw, 340px));
+  width: var(--wheel-size);
+  height: var(--wheel-size);
   margin-top: clamp(6px, 6vh, 40px);
   margin-bottom: 8px;
 }
@@ -349,15 +350,28 @@ html.tg-fullsize .slider-content{ padding-top: 0 !important; }
 html.tg-fullscreen #tab-upgrade.container{ padding-top: var(--profile-pad-top, 0px); }
 html.tg-fullscreen .upgrade-root{ min-height: calc(100svh - var(--tabbar-offset) - var(--profile-pad-top, 0px)); }
 /* In fullscreen, size is provided by JS via --wheel-size; we only tweak spacing here */
-html.tg-fullscreen .up-wheel{ margin-top: 15px; }
 html.tg-fullscreen .up-cards{ height:auto; }
+/* default fallback just in case */
 
-/* Fullsize / non-fullscreen: shrink the wheel on desktop and Telegram fullsize */
-html.tg-fullsize .up-wheel,
-html:not(.tg-fullscreen) #tab-upgrade .up-wheel{
-  width: var(--wheel-size, clamp(170px, 28vw, 260px));
-  height: var(--wheel-size, clamp(170px, 28vw, 260px));
+
+/* Fullscreen = big wheel */
+html.tg-fullscreen {
+  --wheel-size: clamp(220px, 68vw, 420px);
+  margin-top: 15px;
 }
+
+/* Fullsize on mobile = medium wheel */
+html.tg-fullsize {
+  --wheel-size: clamp(200px, 34vw, 340px);
+}
+
+/* Fullsize on desktop/tablet wide = even smaller wheel */
+@media (min-width: 601px) {
+  html.tg-fullsize {
+    --wheel-size: clamp(200px, 34vw, 340px);
+  }
+}
+
 
 /* Ensure equal tile heights in fullscreen (left add-wrap = right target card) */
 html.tg-fullscreen #tab-upgrade{ --upgrade-tile-h: clamp(80px, 18svh, 90px); }
