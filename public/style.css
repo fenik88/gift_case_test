@@ -200,7 +200,7 @@ html.tg-fullsize .slider-content{ padding-top: 0 !important; }
 
 /* Колесо: адаптивный размер, без растягивания */
 .up-wheel{
-  --wheel-size: clamp(160px, 42vw, 280px);
+  --wheel-size: clamp(180px, 50vw, 340px);
   width: var(--wheel-size);
   height: var(--wheel-size);
   margin-top: clamp(6px, 6vh, 40px);
@@ -332,7 +332,7 @@ html.tg-fullsize .slider-content{ padding-top: 0 !important; }
 
 /* Height-tuned layout for short screens */
 @media (max-height: 740px){
-  .up-wheel{ --wheel-size: clamp(140px, 36svh, 220px); margin-top: clamp(2px, 2svh, 20px); }
+  .up-wheel{ --wheel-size: clamp(160px, 40svh, 260px); margin-top: clamp(2px, 2svh, 20px); }
   .up-add-wrap{ height: clamp(100px, 18svh, 140px); }
   .up-target-card{ max-width: 200px; height: clamp(100px, 18svh, 140px) }
   .up-mult-btn{ padding:6px 10px; }
@@ -342,13 +342,13 @@ html.tg-fullsize .slider-content{ padding-top: 0 !important; }
 /* ---------- Telegram fullscreen tuning (mobile) ---------- */
 html.tg-fullscreen #tab-upgrade.container{ padding-top: var(--profile-pad-top, 0px); }
 html.tg-fullscreen .upgrade-root{ min-height: calc(100svh - var(--tabbar-offset) - var(--profile-pad-top, 0px)); }
-html.tg-fullscreen .up-wheel{ --wheel-size: clamp(150px, 52vw, 230px); margin-top: 4px; }
+html.tg-fullscreen .up-wheel{ --wheel-size: clamp(180px, 60vw, 340px); margin-top: 4px; }
 html.tg-fullscreen .up-cards{ height:auto; }
 
 /* Fullsize (non-fullscreen): use base paddings and proportions */
 html.tg-fullsize #tab-upgrade.container{ padding-top: 0; }
 html.tg-fullsize .upgrade-root{ min-height: calc(100svh - var(--tabbar-offset)); }
-html.tg-fullsize .up-wheel{ --wheel-size: clamp(160px, 42vw, 280px); margin-top: 6px; }
+html.tg-fullsize .up-wheel{ --wheel-size: clamp(180px, 50vw, 340px); margin-top: 6px; }
 
 /* Список предметов слева */
 .up-list{
@@ -395,7 +395,6 @@ html.tg-fullsize .up-wheel{ --wheel-size: clamp(160px, 42vw, 280px); margin-top:
 
 /* ---------- Profile (scoped to #tab-profile) ---------- */
 /* Make profile tab a normal page flow similar to upgrade */
-#tab-profile { display: block !important; }
 #tab-profile.container {
   padding: var(--profile-pad-top, 0px) 16px calc(16px + var(--tabbar-offset));
   text-align: initial;
