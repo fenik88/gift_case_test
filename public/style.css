@@ -334,7 +334,11 @@ html.tg-fullsize .slider-content{ padding-top: 0 !important; }
 /* Height-tuned layout for short screens */
 @media (max-height: 740px){
   /* On very short screens, scale the wheel down a bit */
-  .up-wheel{ var(--wheel-size); margin-top: clamp(2px, 2svh, 20px); }
+  .up-wheel{
+    width: var(--wheel-size, clamp(180px, 44svh, 300px));
+    height: var(--wheel-size, clamp(180px, 44svh, 300px));
+    margin-top: clamp(2px, 2svh, 20px);
+  }
   .up-add-wrap{ height: clamp(100px, 18svh, 140px); }
   .up-target-card{ max-width: 200px; height: clamp(100px, 18svh, 140px) }
   .up-mult-btn{ padding:6px 10px; }
@@ -347,6 +351,13 @@ html.tg-fullscreen .upgrade-root{ min-height: calc(100svh - var(--tabbar-offset)
 /* In fullscreen, size is provided by JS via --wheel-size; we only tweak spacing here */
 html.tg-fullscreen .up-wheel{ margin-top: 15px; }
 html.tg-fullscreen .up-cards{ height:auto; }
+
+/* Fullsize / non-fullscreen: shrink the wheel on desktop and Telegram fullsize */
+html.tg-fullsize .up-wheel,
+html:not(.tg-fullscreen) #tab-upgrade .up-wheel{
+  width: var(--wheel-size, clamp(170px, 28vw, 260px));
+  height: var(--wheel-size, clamp(170px, 28vw, 260px));
+}
 
 /* Ensure equal tile heights in fullscreen (left add-wrap = right target card) */
 html.tg-fullscreen #tab-upgrade{ --upgrade-tile-h: clamp(80px, 18svh, 90px); }
