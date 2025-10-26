@@ -357,7 +357,35 @@ html.tg-fullscreen #tab-upgrade .up-right .up-target-card{
 /* Fullsize (non-fullscreen): use base paddings and proportions */
 html.tg-fullsize #tab-upgrade.container{ padding-top: 0; }
 html.tg-fullsize .upgrade-root{ min-height: calc(100svh - var(--tabbar-offset)); }
-html.tg-fullsize .up-wheel{ --wheel-size: clamp(200px, 42vw, 340px); margin-top: 6px; }
+html.tg-fullsize .up-wheel{
+  --wheel-size: clamp(170px, 34vw, 300px);
+  width: clamp(170px, 34vw, 300px) !important;
+  height: clamp(170px, 34vw, 300px) !important;
+  margin-top: 8px;
+}
+
+/* Also enforce fullsize sizing whenever NOT fullscreen (covers browsers and Telegram fullsize) */
+html:not(.tg-fullscreen) #tab-upgrade .up-wheel{
+  --wheel-size: clamp(170px, 34vw, 300px);
+  width: var(--wheel-size) !important;
+  height: var(--wheel-size) !important;
+}
+
+/* Extra specificity to win over base rules in fullsize */
+html:not(.tg-fullscreen) #tab-upgrade.is-active .up-wheel{
+  width: clamp(170px, 34vw, 300px) !important;
+  height: clamp(170px, 34vw, 300px) !important;
+}
+
+/* ID-based override to guarantee smaller size in fullsize contexts */
+html.tg-fullsize #upWheel{
+  width: clamp(170px, 34vw, 300px) !important;
+  height: clamp(170px, 34vw, 300px) !important;
+}
+html:not(.tg-fullscreen) #upWheel{
+  width: clamp(170px, 34vw, 300px) !important;
+  height: clamp(170px, 34vw, 300px) !important;
+}
 
 /* Список предметов слева */
 .up-list{

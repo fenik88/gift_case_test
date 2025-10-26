@@ -147,6 +147,18 @@ function syncTabbar(){
         // Remove internal top padding in fullsize
         root.style.setProperty("--slider-pad-top", `0px`);
       }
+      // Runtime wheel sizing: force smaller wheel in fullsize, allow CSS to drive in fullscreen
+      const wheelEl = document.getElementById("upWheel");
+      if (wheelEl){
+        if (isFs){
+          wheelEl.style.removeProperty("width");
+          wheelEl.style.removeProperty("height");
+        } else {
+          const sz = "clamp(170px, 34vw, 300px)";
+          wheelEl.style.width = sz;
+          wheelEl.style.height = sz;
+        }
+      }
     }catch(e){ /* noop */ }
   }
   
